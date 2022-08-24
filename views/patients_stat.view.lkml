@@ -19,15 +19,15 @@ view: patients_stat {
   # measures for this dimension, but you can also add measures of many different aggregates.
   # Click on the type parameter to see all the options in the Quick Help panel on the right.
 
-  measure: total_avg_order_amount {
-    type: sum
-    sql: ${avg_order_amount} ;;
-  }
+  # measure: total_avg_order_amount {
+  #   type: sum
+  #   sql: ${avg_order_amount} ;;
+  # }
 
-  measure: average_avg_order_amount {
-    type: average
-    sql: ${avg_order_amount} ;;
-  }
+  # measure: average_avg_order_amount {
+  #   type: average
+  #   sql: ${avg_order_amount} ;;
+  # }
 
   dimension: avg_order_freq_in_days {
     type: number
@@ -42,6 +42,12 @@ view: patients_stat {
   dimension: comp_id {
     type: number
     sql: ${TABLE}.comp_id ;;
+    hidden: yes
+  }
+
+  dimension: comp_name {
+    type: string
+    sql: ${TABLE}.comp_name ;;
   }
 
   # Dates and timestamps can be represented in Looker using a dimension group of type: time.
@@ -75,6 +81,12 @@ view: patients_stat {
     convert_tz: no
     datatype: date
     sql: ${TABLE}.date_of_birth ;;
+    hidden: yes
+  }
+
+  dimension: age {
+    type: number
+    sql: datediff(year, ${date_of_birth_raw}, GETDATE()) ;;
   }
 
   dimension: distinct_offices_count {
@@ -187,6 +199,7 @@ view: patients_stat {
   dimension: patient_id {
     type: number
     sql: ${TABLE}.patient_id ;;
+    hidden: yes
   }
 
   dimension: saturday_order_count {
@@ -241,6 +254,5 @@ view: patients_stat {
 
   measure: count {
     type: count
-    drill_fields: [city_name, last_name, first_name]
   }
 }
