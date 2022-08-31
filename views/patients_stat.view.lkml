@@ -1,33 +1,27 @@
 # The name of this view in Looker is "Patients Stat"
 view: patients_stat {
-  # The sql_table_name parameter indicates the underlying database table
-  # to be used for all fields in this view.
-  sql_table_name: marts.patients_stat ;;
-  # No primary key is defined for this view. In order to join this view in an Explore,
-  # define primary_key: yes on a dimension that has no repeated values.
 
-  # Here's what a typical dimension looks like in LookML.
-  # A dimension is a groupable field that can be used to filter query results.
-  # This dimension will be called "Avg Order Amount" in Explore.
+  sql_table_name: marts.patients_stat ;;
+
+  dimension: primary_key {
+    primary_key: yes
+    sql: CONCAT(${TABLE}.comp_id, ${TABLE}.patient_id) ;;
+    hidden: yes
+  }
 
   dimension: avg_order_amount {
     type: number
     sql: ${TABLE}.avg_order_amount ;;
   }
 
-  # A measure is a field that uses a SQL aggregate function. Here are defined sum and average
-  # measures for this dimension, but you can also add measures of many different aggregates.
-  # Click on the type parameter to see all the options in the Quick Help panel on the right.
-
-  # measure: total_avg_order_amount {
-  #   type: sum
-  #   sql: ${avg_order_amount} ;;
-  # }
-
-  # measure: average_avg_order_amount {
-  #   type: average
-  #   sql: ${avg_order_amount} ;;
-  # }
+  dimension: avg_order_amount_tier {
+    type: tier
+    tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100,
+      110, 120, 130, 140, 150, 160, 170, 180, 190, 200,
+      210, 220, 230, 240, 250]
+    style: integer
+    sql: ${avg_order_amount} ;;
+  }
 
   dimension: avg_order_freq_in_days {
     type: number
@@ -39,19 +33,21 @@ view: patients_stat {
     sql: ${TABLE}.city_name ;;
   }
 
+  dimension: state_name {
+    map_layer_name: us_states
+    sql: ${TABLE}.state_name ;;
+  }
+
   dimension: comp_id {
     type: number
     sql: ${TABLE}.comp_id ;;
-    hidden: yes
+    # hidden: yes
   }
 
   dimension: comp_name {
     type: string
     sql: ${TABLE}.comp_name ;;
   }
-
-  # Dates and timestamps can be represented in Looker using a dimension group of type: time.
-  # Looker converts dates and timestamps to the specified timeframes within the dimension group.
 
   dimension_group: created {
     type: time
@@ -87,6 +83,19 @@ view: patients_stat {
   dimension: age {
     type: number
     sql: datediff(year, ${date_of_birth_raw}, GETDATE()) ;;
+  }
+
+  dimension: age_tier {
+    type: tier
+    tiers: [18, 19, 20,
+      21, 22, 23, 24, 25, 26, 27, 28, 29, 30,
+      31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+      41, 42, 43, 44, 45, 46, 47, 48, 49, 50,
+      51, 52, 53, 54, 55, 56, 57, 58, 59, 60,
+      61, 62, 63, 64, 65, 66, 67, 68, 69, 70,
+      71, 72, 73, 74, 75, 76, 77, 78, 79, 80]
+    style: integer
+    sql: ${age} ;;
   }
 
   dimension: distinct_offices_count {
@@ -184,6 +193,13 @@ view: patients_stat {
   dimension: offline_purchase_amount {
     type: number
     sql: ${TABLE}.offline_purchase_amount ;;
+    value_format_name: usd
+  }
+
+  measure: total_offline_purchase_amount {
+    type: sum
+    sql: ${offline_purchase_amount} ;;
+    value_format_name: usd
   }
 
   dimension: online_order_count {
@@ -194,12 +210,19 @@ view: patients_stat {
   dimension: online_purchase_amount {
     type: number
     sql: ${TABLE}.online_purchase_amount ;;
+    value_format_name: usd
+  }
+
+  measure: total_online_purchase_amount {
+    type: sum
+    sql: ${online_purchase_amount} ;;
+    value_format_name: usd
   }
 
   dimension: patient_id {
     type: number
     sql: ${TABLE}.patient_id ;;
-    hidden: yes
+    # hidden: yes
   }
 
   dimension: saturday_order_count {
@@ -252,7 +275,8 @@ view: patients_stat {
     sql: ${TABLE}.wednesday_order_count ;;
   }
 
-  measure: count {
+  measure: patients_count {
     type: count
   }
+
 }
