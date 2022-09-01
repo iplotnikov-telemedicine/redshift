@@ -103,6 +103,11 @@ view: patients_stat {
     sql: ${TABLE}.distinct_offices_count ;;
   }
 
+  dimension: is_chain {
+    type: yesno
+    sql: ${distinct_offices_count} > 1 ;;
+  }
+
   dimension: first_name {
     type: string
     sql: ${TABLE}.first_name ;;
@@ -115,7 +120,18 @@ view: patients_stat {
 
   dimension: gender {
     type: string
-    sql: ${TABLE}.gender ;;
+    case: {
+      when: {
+        sql: ${TABLE}.gender in ('Male', 'M', 'male') ;;
+        label: "Male"
+      }
+      when: {
+        sql: ${TABLE}.gender in ('Female', 'F', 'female') ;;
+        label: "Female"
+      }
+      else: "Unspecified"
+    }
+    alpha_sort: yes
   }
 
   dimension: last_name {
@@ -180,11 +196,6 @@ view: patients_stat {
     sql: ${TABLE}.min_order_dt ;;
   }
 
-  dimension: monday_order_count {
-    type: number
-    sql: ${TABLE}.monday_order_count ;;
-  }
-
   dimension: offline_order_count {
     type: number
     sql: ${TABLE}.offline_order_count ;;
@@ -225,21 +236,6 @@ view: patients_stat {
     # hidden: yes
   }
 
-  dimension: saturday_order_count {
-    type: number
-    sql: ${TABLE}.saturday_order_count ;;
-  }
-
-  dimension: sunday_order_count {
-    type: number
-    sql: ${TABLE}.sunday_order_count ;;
-  }
-
-  dimension: thursday_order_count {
-    type: number
-    sql: ${TABLE}.thursday_order_count ;;
-  }
-
   dimension: top_purchased_brands {
     type: string
     sql: ${TABLE}.top_purchased_brands ;;
@@ -255,24 +251,9 @@ view: patients_stat {
     sql: ${TABLE}.total_purchase_amount ;;
   }
 
-  dimension: tuesday_order_count {
-    type: number
-    sql: ${TABLE}.tuesday_order_count ;;
-  }
-
   dimension: type {
     type: number
     sql: ${TABLE}.type ;;
-  }
-
-  dimension: visited_offices_count {
-    type: number
-    sql: ${TABLE}.visited_offices_count ;;
-  }
-
-  dimension: wednesday_order_count {
-    type: number
-    sql: ${TABLE}.wednesday_order_count ;;
   }
 
   measure: patients_count {

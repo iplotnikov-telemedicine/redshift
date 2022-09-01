@@ -3,6 +3,13 @@ view: orders_stat {
   sql_table_name: marts.orders_stat ;;
   #
   # # Define your dimensions and measures here, like this:
+
+  dimension: primary_key {
+    type: string
+    sql: CONCAT(${comp_id}, ${order_id}) ;;
+    primary_key: yes
+  }
+
   dimension: comp_id {
     type: number
     sql: ${TABLE}.comp_id ;;
@@ -16,6 +23,41 @@ view: orders_stat {
   dimension: order_id {
     type: number
     sql: ${TABLE}.order_id ;;
+  }
+
+  dimension: channel {
+    type: string
+    case: {
+      when: {
+        sql: ${TABLE}.marketplace = 1 ;;
+        label: "POS"
+      }
+      when: {
+        sql: ${TABLE}.marketplace = 2 ;;
+        label: "e-commerce"
+      }
+      when: {
+        sql: ${TABLE}.marketplace = 3 ;;
+        label: "sweede"
+      }
+      when: {
+        sql: ${TABLE}.marketplace = 4 ;;
+        label: "offline POS"
+      }
+      when: {
+        sql: ${TABLE}.marketplace = 5 ;;
+        label: "weedmaps"
+      }
+      when: {
+        sql: ${TABLE}.marketplace = 6 ;;
+        label: "openAPI"
+      }
+    }
+  }
+
+  dimension: type {
+    type: string
+    sql: ${TABLE}.type ;;
   }
 
   dimension: number_of_items {
@@ -38,6 +80,13 @@ view: orders_stat {
     sql: ${TABLE}.order_product_count ;;
   }
 
+  dimension: product_count_tier {
+    type: tier
+    tiers: [1, 2, 3, 4, 5]
+    style: integer
+    sql: ${order_product_count} ;;
+  }
+
   dimension: promo_product_count {
     type: number
     sql: ${TABLE}.promo_product_count ;;
@@ -56,6 +105,7 @@ view: orders_stat {
   measure: promo_product_share {
     type: number
     sql: ${total_promo_product_count} / ${total_order_product_count} ;;
+    value_format_name: percent_1
   }
 
   dimension: promo_discount_amount {
@@ -73,10 +123,11 @@ view: orders_stat {
     sql: ${TABLE}.all_products_amount ;;
   }
 
-  measure: patient_count {
+  measure: number_of_orders {
     type: count_distinct
-    sql: CONCAT(${comp_id}, ${patient_id}) ;;
+    sql: CONCAT(${comp_id}, ${order_id}) ;;
   }
+
 
   # dimension: lifetime_orders {
   #   description: "The total number of orders for each user"

@@ -25,14 +25,24 @@ persist_with: redshift_default_datagroup
 # Typically, join parameters require that you define the join type, join relationship, and a sql_on clause.
 # Each joined view also needs to define a primary key.
 
+explore: orders_stat {
+
+  join: patients_stat {
+    relationship: many_to_one
+    type: inner
+    sql_on: ${orders_stat.comp_id} = ${patients_stat.comp_id}
+      and ${orders_stat.patient_id} = ${patients_stat.patient_id};;
+  }
+}
+
 explore: patients_stat {
-  sql_always_where: ${warehouse_orders.confirmed_at} IS NOT NULL ;;
+  # sql_always_where: ${warehouse_orders.confirmed_at} IS NOT NULL ;;
 
   join: orders_stat {
     relationship: one_to_many
-    type: left_outer
-    sql_on: ${patients_stat.comp_id} = ${orders_stat.comp_id}
-    and ${patients_stat.patient_id} = ${orders_stat.patient_id};;
+    type: inner
+    sql_on: ${orders_stat.comp_id} = ${patients_stat.comp_id}
+      and ${orders_stat.patient_id} = ${patients_stat.patient_id};;
   }
 
   join: warehouse_orders {
@@ -41,6 +51,7 @@ explore: patients_stat {
     sql_on: ${patients_stat.comp_id} = ${warehouse_orders.comp_id}
       and ${patients_stat.patient_id} = ${warehouse_orders.patient_id};;
   }
+
   join: warehouse_order_items {
     relationship: one_to_many
     type: left_outer

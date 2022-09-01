@@ -107,9 +107,19 @@ view: warehouse_order_items {
     sql: ${TABLE}.free_amount ;;
   }
 
+  measure: total_free_amount {
+    type: sum
+    sql: ${free_amount} ;;
+  }
+
   dimension: free_discount {
     type: number
     sql: ${TABLE}.free_discount ;;
+  }
+
+  measure: total_free_discount {
+    type: sum
+    sql: ${free_discount} ;;
   }
 
   dimension: income {
@@ -180,6 +190,11 @@ view: warehouse_order_items {
   dimension: paid_amount {
     type: number
     sql: ${TABLE}.paid_amount ;;
+  }
+
+  measure: total_paid_amount {
+    type: sum
+    sql: ${paid_amount} ;;
   }
 
   dimension: price {
