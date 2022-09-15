@@ -98,16 +98,6 @@ view: patients_stat {
     sql: ${age} ;;
   }
 
-  dimension: distinct_offices_count {
-    type: number
-    sql: ${TABLE}.distinct_offices_count ;;
-  }
-
-  dimension: is_chain {
-    type: yesno
-    sql: ${distinct_offices_count} > 1 ;;
-  }
-
   dimension: first_name {
     type: string
     sql: ${TABLE}.first_name ;;
@@ -239,6 +229,11 @@ view: patients_stat {
   dimension: top_purchased_brands {
     type: string
     sql: ${TABLE}.top_purchased_brands ;;
+  }
+
+  dimension: top_dispensaries {
+    type: string
+    sql: ${TABLE}.top_dispensaries ;;
   }
 
   dimension: total_order_count {

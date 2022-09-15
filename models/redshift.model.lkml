@@ -7,12 +7,12 @@ include: "/views/**/*.view"
 # Datagroups define a caching policy for an Explore. To learn more,
 # use the Quick Help panel on the right to see documentation.
 
-datagroup: redshift_default_datagroup {
-  # sql_trigger: SELECT MAX(id) FROM etl_log;;
-  max_cache_age: "24 hours"
-}
+# datagroup: redshift_default_datagroup {
+#   # sql_trigger: SELECT MAX(id) FROM etl_log;;
+#   max_cache_age: "24 hours"
+# }
 
-persist_with: redshift_default_datagroup
+# persist_with: redshift_default_datagroup
 
 # Explores allow you to join together different views (database tables) based on the
 # relationships between fields. By joining a view into an Explore, you make those
@@ -38,11 +38,24 @@ explore: orders_stat {
 explore: patients_stat {
   # sql_always_where: ${warehouse_orders.confirmed_at} IS NOT NULL ;;
 
+  join: companies {
+    relationship: many_to_one
+    type: inner
+    sql_on: ${patients_stat.comp_id} = ${patients_stat.comp_id} ;;
+  }
+
   join: orders_stat {
-    relationship: one_to_many
+    relationship: one_to_one
     type: inner
     sql_on: ${orders_stat.comp_id} = ${patients_stat.comp_id}
       and ${orders_stat.patient_id} = ${patients_stat.patient_id};;
+  }
+
+  join: order_item_stat {
+    relationship: one_to_one
+    type: inner
+    sql_on: ${order_item_stat.comp_id} = ${patients_stat.comp_id}
+      and ${order_item_stat.patient_id} = ${patients_stat.patient_id};;
   }
 
   join: warehouse_orders {
