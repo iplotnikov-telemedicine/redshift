@@ -29,43 +29,49 @@ view: monthly_orders_group_stat {
 
     measure: patients {
       description: ""
-      type: sum
+      type: average
       sql: ${TABLE}.patients ;;
     }
 
     measure: orders {
       description: ""
       type: sum
+      value_format: "#,##0"
       sql: ${TABLE}.orders ;;
     }
 
     measure: unique_products {
       description: ""
       type: average
+      value_format: "0.#"
       sql: ${TABLE}.unique_products ;;
     }
 
     measure: unique_categories {
       description: ""
       type: average
+      value_format: "0.#"
       sql: ${TABLE}.unique_categories ;;
     }
 
     measure: unique_brands {
       description: ""
       type: average
+      value_format: "0.#"
       sql: ${TABLE}.unique_brands ;;
     }
 
     measure: order_items {
       description: ""
       type: sum
+      value_format: "#,##0"
       sql: ${TABLE}.order_items ;;
     }
 
     measure: order_net_sales {
       description: ""
       type: sum
+      value_format: "#,##0"
       sql: ${TABLE}.order_net_sales ;;
     }
 

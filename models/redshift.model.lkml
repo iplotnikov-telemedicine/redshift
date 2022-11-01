@@ -74,5 +74,4 @@ explore: daily_inventory {
 
 # Customer Frequency Report for IO
 explore: monthly_orders_group_stat {
-  sql_always_where: ${comp_id} = 3628 ;;
 }

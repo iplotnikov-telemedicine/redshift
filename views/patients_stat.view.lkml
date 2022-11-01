@@ -241,6 +241,21 @@ view: patients_stat {
     sql: ${TABLE}.total_order_count ;;
   }
 
+  dimension: month_orders {
+    type: number
+    sql: CASE WHEN ${patients_stat.lifetime_in_days} = 1
+          THEN 1
+          ELSE CEILING(${patients_stat.total_order_count} / (${patients_stat.lifetime_in_days}/30.5))
+          END;;
+  }
+
+  dimension: month_orders_tier {
+    type: tier
+    tiers: [0, 4, 7, 10, 13]
+    style: integer
+    sql: ${month_orders};;
+  }
+
   dimension: total_purchase_amount {
     type: number
     sql: ${TABLE}.total_purchase_amount ;;
