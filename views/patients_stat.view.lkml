@@ -251,7 +251,7 @@ view: patients_stat {
 
   dimension: month_orders_tier {
     type: tier
-    tiers: [0, 4, 7, 10, 13]
+    tiers: [0, 1, 2, 3, 4, 5, 6, 7, 10, 13]
     style: integer
     sql: ${month_orders};;
   }
@@ -268,6 +268,11 @@ view: patients_stat {
 
   measure: patients_count {
     type: count
+  }
+
+  measure: patients_count_all_comp {
+    type: count_distinct
+    sql: ${primary_key};;
   }
 
 }
