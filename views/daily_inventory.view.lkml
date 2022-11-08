@@ -6,9 +6,11 @@ view: daily_inventory {
     sql: CONCAT(${TABLE}.report_date, ${TABLE}.comp_id, ${TABLE}.office_id, ${TABLE}.product_id) ;;
   }
 
-  dimension: report_date {
+  dimension_group: report_date {
+    datatype: date
+    timeframes: [date, week, month, year]
     description: ""
-    type: date
+    type: time
     sql: ${TABLE}.report_date ;;
   }
 
