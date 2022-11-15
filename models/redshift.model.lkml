@@ -2,6 +2,15 @@ connection: "redshift"
 
 include: "/views/**/*.view"
 
+explore: customer_limits_history {
+
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+
+}
+
 explore: orders_stat {
 
   join: patients_stat {
@@ -35,18 +44,18 @@ explore: patients_stat {
       and ${order_item_stat.patient_id} = ${patients_stat.patient_id};;
   }
 
-  join: warehouse_orders {
+  join: orders_with_details {
     relationship: one_to_many
     type: left_outer
-    sql_on: ${patients_stat.comp_id} = ${warehouse_orders.comp_id}
-      and ${patients_stat.patient_id} = ${warehouse_orders.patient_id};;
+    sql_on: ${patients_stat.comp_id} = ${orders_with_details.comp_id}
+      and ${patients_stat.patient_id} = ${orders_with_details.patient_id};;
   }
 
   join: warehouse_order_items {
     relationship: one_to_many
     type: left_outer
-    sql_on: ${warehouse_orders.comp_id} = ${warehouse_order_items.comp_id}
-      and ${warehouse_orders.id} = ${warehouse_order_items.order_id};;
+    sql_on: ${orders_with_details.comp_id} = ${warehouse_order_items.comp_id}
+      and ${orders_with_details.id} = ${warehouse_order_items.order_id};;
   }
   join: products {
     relationship: many_to_one
@@ -74,4 +83,11 @@ explore: daily_inventory {
 
 # Customer Frequency Report for IO
 explore: monthly_orders_group_stat {
+}
+
+explore: orders_with_details {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
 }

@@ -1,5 +1,5 @@
-view: warehouse_orders {
-  sql_table_name: staging.warehouse_orders ;;
+view: orders_with_details {
+  sql_table_name: test.orders_with_details ;;
 
   dimension: primary_key {
     primary_key: yes
@@ -7,10 +7,22 @@ view: warehouse_orders {
     hidden: yes
   }
 
+  filter: account_name {
+    type: string
+    suggest_dimension: domain_prefix
+    sql: {% condition account_name %} ${domain_prefix} {% endcondition %} ;;
+  }
+
+  dimension: domain_prefix {
+    type: string
+    sql: ${TABLE}.domain_prefix ;;
+    hidden: yes
+  }
+
   dimension: comp_id {
     type: number
     sql: ${TABLE}.comp_id ;;
-    # hidden: yes
+    hidden: yes
   }
 
   dimension: num_days {
@@ -19,7 +31,6 @@ view: warehouse_orders {
   }
 
   dimension: id {
-    primary_key: yes
     type: number
     sql: ${TABLE}.id ;;
   }
@@ -206,6 +217,21 @@ view: warehouse_orders {
   dimension: type {
     type: string
     sql: ${TABLE}.type ;;
+  }
+
+  dimension: patient_first_name {
+    type: string
+    sql: ${TABLE}.patient_first_name ;;
+  }
+
+  dimension: patient_last_name {
+    type: string
+    sql: ${TABLE}.patient_last_name ;;
+  }
+
+  dimension: patient_phone {
+    type: string
+    sql: ${TABLE}.patient_phone ;;
   }
 
   dimension: is_completed {
