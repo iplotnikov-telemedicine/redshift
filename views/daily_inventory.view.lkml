@@ -1,9 +1,20 @@
 view: daily_inventory {
   sql_table_name: test.daily_inventory ;;
 
+  filter: date_time_filter {
+    convert_tz: no
+    type: date_time
+    datatype: datetime
+  }
+
+  dimension: is_filtered_range {
+    type: yesno
+    sql: ${TABLE}.report_date  between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;
+  }
+
   dimension: primary_key {
     primary_key:  yes
-    sql: CONCAT(${TABLE}.report_date, ${TABLE}.comp_id, ${TABLE}.office_id, ${TABLE}.product_id) ;;
+    sql: CONCAT(${TABLE}.report_date, CONCAT(${TABLE}.comp_id, CONCAT(${TABLE}.office_id, ${TABLE}.product_id))) ;;
   }
 
   dimension_group: report_date {
@@ -34,6 +45,7 @@ view: daily_inventory {
 
   dimension: office_name {
     description: ""
+    suggest_persist_for: "24 hours"
     type: string
     sql: ${TABLE}.office_name;;
   }
