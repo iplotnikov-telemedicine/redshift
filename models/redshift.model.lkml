@@ -1,6 +1,7 @@
 connection: "redshift"
 
 include: "/views/**/*.view"
+include: "/data_tests.lkml"
 
 explore: orders_stat {
 
@@ -67,11 +68,39 @@ explore: patients_stat {
       and ${products.brand_id} = ${brands.id};;
   }
 }
-# Brand Details Dashboard for Kushagram
-explore: daily_inventory {
-  sql_always_where: ${comp_id} = 3628 ;;
+
+
+#---------------------------------------------------------
+# BRAND DETAILS DASHBOARD SOURCE
+#---------------------------------------------------------
+
+explore: order_items_with_details {
+  sql_always_where: ${comp_id} = 3628;;
+}
+explore: daily_inventory  {
+  sql_always_where: ${comp_id} = 3628;;
 }
 
+#---------------------------------------------------------
+# AD-HOC REPORTS SOURCES
+#---------------------------------------------------------
 # Customer Frequency Report for IO
-explore: monthly_orders_group_stat {
+explore: monthly_orders_group_stat {}
+
+
+#---------------------------------------------------------
+# DICTIONARIES FOR FILTERS IN DIFFERENT REPORTS
+#---------------------------------------------------------
+explore: offices {
+  sql_always_where: ${office_comp_id} = 3628;;
+}
+
+explore: brands {
+  sql_always_where: ${comp_id} = 3628;;
+  join: products {
+    relationship: one_to_many
+    type: left_outer
+    sql_on: ${products.comp_id} = ${brands.comp_id}
+      and ${products.brand_id} = ${brands.id} ;;
+  }
 }

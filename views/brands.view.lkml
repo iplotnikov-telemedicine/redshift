@@ -28,6 +28,7 @@ view: brands {
     sql: ${TABLE}.brand_name  ;;
     bypass_suggest_restrictions: no
     full_suggestions: yes
+    suggest_persist_for: "24 hours"
     # suggest_persist_for: "1 second"
   }
 
@@ -123,7 +124,7 @@ view: brands {
                 WHEN ${products.prod_name} like 'Gold Drop%' THEN 'Gold Drop'
                 WHEN ${products.prod_name} like '%Fire Department%' THEN 'Fire Department'
                 ELSE 'UNKNOWN BRAND'
-           END
+          END
     ELSE ${brand_name} END) ;;
   }
 
