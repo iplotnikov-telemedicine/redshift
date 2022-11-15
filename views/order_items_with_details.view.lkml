@@ -6,7 +6,7 @@ view: order_items_with_details {
 #---------------------------------------------------------
 
   filter: date_time_filter {
-    convert_tz: no
+    # convert_tz: no
     type: date_time
     datatype: datetime
     sql: ${confirmed_date} between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;

@@ -9,7 +9,7 @@ view: daily_inventory {
 
   dimension: is_filtered_range {
     type: yesno
-    sql: ${TABLE}.report_date  between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;
+    sql: ${TABLE}.report_date  between {% date_start date_time_filter %} and DATEADD(day,-1,{% date_end date_time_filter %}) ;;
   }
 
   dimension: primary_key {
