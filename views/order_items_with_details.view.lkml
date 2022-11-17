@@ -16,7 +16,7 @@ view: order_items_with_details {
 # ORIGINAL TABLE FEILDS AS DIMENSIONS
 #---------------------------------------------------------
 
-  dimension: domain_prefix {
+  dimension: account_name {
     type: string
     sql: ${TABLE}.domain_prefix ;;
   }
@@ -354,7 +354,11 @@ view: order_items_with_details {
     value_format: ""
     sql: ${TABLE}.product_sub_category_2 ;;
   }
-
+  dimension: product_direct_category {
+    type: string
+    value_format: ""
+    sql: COALESCE(${product_sub_category_2}, ${product_sub_category_1}, ${product_parent_category}) ;;
+  }
 
 #---------------------------------------------------------
 # DERIVED DIMENSIONS
@@ -457,7 +461,7 @@ view: order_items_with_details {
     value_format_name: usd
     sql: ${total_amount} ;;
   }
-  measure: number_of_order_items {
+  measure: number_of_rows {
     type: count
     drill_fields: [detail*]
     value_format_name: decimal_0
