@@ -126,6 +126,16 @@ explore: order_items_with_details {
     field: comp_id
     user_attribute: allowed_customers
   }
+
+  join: product_transactions {
+    sql_on:
+      ${product_transactions.comp_id} = ${order_items_with_details.comp_id}
+      AND ${product_transactions.order_id} = ${order_items_with_details.order_id}
+      AND ${product_transactions.product_checkin_id} = ${order_items_with_details.product_checkin_id};;
+    type: inner
+    relationship: many_to_one
+  }
+
 }
 
 explore: daily_inventory  {
