@@ -31,6 +31,7 @@ view: order_items_with_details {
     sql: ${TABLE}.office_id ;;
   }
   dimension: comp_id {
+    hidden: yes
     type: number
     value_format_name: id
     sql: ${TABLE}.comp_id ;;
@@ -401,10 +402,10 @@ view: order_items_with_details {
     value_format: ""
     sql: ${TABLE}.patient_full_name ;;
   }
-  dimension: patient_group_name {
+  dimension: patient_groups {
     type: string
     value_format: ""
-    sql: ${TABLE}.patient_group_name ;;
+    sql: ${TABLE}.patient_groups ;;
   }
   dimension: patient_state_name {
     type: string

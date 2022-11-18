@@ -8,6 +8,7 @@ view: product_transactions {
   }
 
   dimension: comp_id {
+    hidden: yes
     type: number
     sql:${TABLE}.comp_id;;
   }
