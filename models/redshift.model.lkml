@@ -80,17 +80,6 @@ explore: patients_stat {
 
 
 #---------------------------------------------------------
-# BRAND DETAILS DASHBOARD SOURCE
-#---------------------------------------------------------
-
-# explore: order_items_with_details {
-#   sql_always_where: ${comp_id} = 3628;;
-# }
-# explore: daily_inventory  {
-#   sql_always_where: ${comp_id} = 3628;;
-# }
-
-#---------------------------------------------------------
 # AD-HOC REPORTS SOURCES
 #---------------------------------------------------------
 # Customer Frequency Report for IO
@@ -101,11 +90,17 @@ explore: monthly_orders_group_stat {}
 # DICTIONARIES FOR FILTERS IN DIFFERENT REPORTS
 #---------------------------------------------------------
 explore: offices {
-  sql_always_where: ${office_comp_id} = 3628;;
+  access_filter: {
+    field: office_comp_id
+    user_attribute: allowed_customers
+  }
 }
 
 explore: brands {
-  sql_always_where: ${comp_id} = 3628;;
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
   join: products {
     relationship: one_to_many
     type: left_outer
@@ -121,6 +116,17 @@ explore: orders_with_details {
   }
 }
 
+explore: companies {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+}
+
+
+#---------------------------------------------------------
+# BRAND DETAILS DASHBOARD SOURCE
+#---------------------------------------------------------
 explore: order_items_with_details {
   access_filter: {
     field: comp_id
