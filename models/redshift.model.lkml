@@ -1,7 +1,7 @@
 connection: "redshift"
 
 include: "/views/**/*.view"
-include: "/data_tests.lkml"
+# include: "/data_tests.lkml"
 
 explore: customer_limits_history {
 
@@ -126,6 +126,16 @@ explore: order_items_with_details {
     field: comp_id
     user_attribute: allowed_customers
   }
+
+  join: product_transactions {
+    sql_on: ${order_items_with_details.comp_id} = ${product_transactions.comp_id}
+      AND ${order_items_with_details.order_id} = ${product_transactions.order_id}
+      AND ${order_items_with_details.product_checkin_id} = ${product_transactions.product_checkin_id} ;;
+    type: inner
+    relationship: many_to_one
+    fields: [comp_id, order_id, product_checkin_id, transaction_type_name]
+  }
+
 }
 
 explore: daily_inventory  {

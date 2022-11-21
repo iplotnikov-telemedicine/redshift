@@ -31,6 +31,7 @@ view: order_items_with_details {
     sql: ${TABLE}.office_id ;;
   }
   dimension: comp_id {
+    hidden: yes
     type: number
     value_format_name: id
     sql: ${TABLE}.comp_id ;;
@@ -50,9 +51,13 @@ view: order_items_with_details {
     value_format_name: id
     sql: ${TABLE}.product_id ;;
   }
-  dimension: name {
+  dimension: product_name {
     type: string
     sql: ${TABLE}.name ;;
+  }
+  dimension: prod_sku {
+    type: string
+    sql: ${TABLE}.prod_sku ;;
   }
   dimension: descr {
     type: string
@@ -97,6 +102,11 @@ view: order_items_with_details {
     value_format_name: usd
     sql: ${TABLE}.tax ;;
   }
+  dimension: order_sum_tax {
+    type: number
+    value_format_name: usd
+    sql: ${TABLE}.order_sum_tax ;;
+  }
   dimension: discount_value {
     type: number
     value_format_name: decimal_0
@@ -110,6 +120,11 @@ view: order_items_with_details {
     type: number
     value_format_name: usd
     sql: ${TABLE}.total_amount ;;
+  }
+  dimension: order_total_amount {
+    type: number
+    value_format_name: usd
+    sql: ${TABLE}.order_total_amount ;;
   }
   dimension_group: created {
     type: time
@@ -158,6 +173,21 @@ view: order_items_with_details {
     type: number
     value_format_name: usd
     sql: ${TABLE}.discount_amount ;;
+  }
+  dimension: total_discount_amount {
+    type: number
+    value_format_name: usd
+    sql: ${TABLE}.total_discount_amount ;;
+  }
+  dimension: item_discount_amount {
+    type: number
+    value_format_name: usd
+    sql: ${TABLE}.item_discount_amount ;;
+  }
+  dimension: cart_discount_amount {
+    type: number
+    value_format_name: usd
+    sql: ${TABLE}.cart_discount_amount ;;
   }
   dimension: item_type {
     type: string
@@ -339,6 +369,11 @@ view: order_items_with_details {
     value_format: ""
     sql: ${TABLE}.brand_name ;;
   }
+  dimension: product_direct_category {
+    type: string
+    value_format: ""
+    sql: ${TABLE}.product_direct_category ;;
+  }
   dimension: product_parent_category {
     type: string
     value_format: ""
@@ -346,7 +381,6 @@ view: order_items_with_details {
   }
   dimension: product_sub_category_1 {
     type: string
-    value_format: ""
     sql: ${TABLE}.product_sub_category_1 ;;
   }
   dimension: product_sub_category_2 {
@@ -354,10 +388,43 @@ view: order_items_with_details {
     value_format: ""
     sql: ${TABLE}.product_sub_category_2 ;;
   }
-  dimension: product_direct_category {
+  dimension: order_number {
+    type: string
+    sql: ${TABLE}.order_number ;;
+  }
+  dimension: cashier_name {
+    type: string
+    sql: ${TABLE}.cashier_name ;;
+  }
+  dimension: patient_full_name {
     type: string
     value_format: ""
-    sql: COALESCE(${product_sub_category_2}, ${product_sub_category_1}, ${product_parent_category}) ;;
+    sql: ${TABLE}.patient_full_name ;;
+  }
+  dimension: patient_groups {
+    type: string
+    value_format: ""
+    sql: ${TABLE}.patient_groups ;;
+  }
+  dimension: patient_state_name {
+    type: string
+    value_format: ""
+    sql: ${TABLE}.patient_state_name ;;
+  }
+  dimension: patient_city_name {
+    type: string
+    value_format: ""
+    sql: ${TABLE}.patient_city_name ;;
+  }
+  dimension: patient_dmv {
+    type: string
+    value_format: ""
+    sql: ${TABLE}.patient_dmv ;;
+  }
+  dimension: patient_zip_name {
+    type: string
+    value_format: ""
+    sql: ${TABLE}.patient_zip_name ;;
   }
 
 #---------------------------------------------------------
@@ -370,7 +437,7 @@ view: order_items_with_details {
   }
   dimension: unit_price {
     type: number
-    sql: ${amount} / ${quantity} ;;
+    sql: CASE ${count} WHEN 0 THEN 0 ELSE ${amount} / ${count} - ${item_discount_amount} END ;;
     value_format_name: usd
   }
   dimension: order_item_quantity {
@@ -386,7 +453,8 @@ view: order_items_with_details {
   dimension: refund_wo_tax {
     type: number
     sql: CASE WHEN ${paid_amount} IS NOT NULL AND ${paid_amount} <> 0
-          THEN ${returned_amount} - (${returned_amount} * ${tax} / ${paid_amount})
+          THEN ${returned_amount} - (${returned_amount} * ${tax}
+          / coalesce(${paid_amount}, NULL))
           ELSE 0 END;;
     value_format_name: usd
   }
@@ -412,10 +480,6 @@ view: order_items_with_details {
 #---------------------------------------------------------
   measure: count_rows {
     type: count
-  }
-  measure: product_list {
-    type: list
-    list_field: name
   }
   measure: price_list {
     type: list
@@ -445,14 +509,14 @@ view: order_items_with_details {
   measure: avg_unit_price {
     type: number
     sql:CASE WHEN ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-          THEN ${amount_sum} / ${quantity_sum}
+          THEN ${amount_sum} / coalesce(${quantity_sum}, NULL)
           ELSE Null END;;
     value_format_name: usd
   }
   measure: avg_unit_cogs{
     type: number
     sql: CASE WHEN ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-          THEN ${sum_cogs} / ${quantity_sum}
+          THEN ${sum_cogs} / coalesce(${quantity_sum}, NULL)
           ELSE Null END;;
     value_format_name: usd
   }
@@ -463,7 +527,6 @@ view: order_items_with_details {
   }
   measure: number_of_rows {
     type: count
-    drill_fields: [detail*]
     value_format_name: decimal_0
   }
   measure: sum_gross_sale {
@@ -510,7 +573,7 @@ view: order_items_with_details {
   measure: total_gross_margin_percent {
     type: number
     sql:CASE WHEN ${sum_profit} IS NOT NULL AND ${sum_profit} <> 0
-          THEN ${sum_profit}/${sum_net_sales}
+          THEN ${sum_profit} / coalesce(${sum_net_sales}, NULL)
           ELSE Null END;;
     value_format_name: percent_1
   }
@@ -520,12 +583,4 @@ view: order_items_with_details {
 # FIELDS FOR DRILLING
 #---------------------------------------------------------
 
-  set: detail {
-    fields: [
-      id,
-      name,
-      quantity,
-      paid_amount
-    ]
-  }
 }

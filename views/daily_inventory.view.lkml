@@ -1,6 +1,11 @@
 view: daily_inventory {
   sql_table_name: test.daily_inventory ;;
 
+  dimension: number_of_days_filtered {
+    type: number
+    sql: datediff(days, {% date_start report_date_date %},{% date_end report_date_date %}) ;;
+  }
+
   filter: date_time_filter {
     convert_tz: no
     type: date_time
@@ -31,7 +36,7 @@ view: daily_inventory {
     sql: ${TABLE}.comp_id ;;
   }
 
-  dimension: domain_prefix {
+  dimension: account_name {
     description: ""
     type: string
     sql: ${TABLE}.domain_prefix ;;
@@ -72,6 +77,30 @@ view: daily_inventory {
     description: ""
     type: string
     sql: ${TABLE}.brand_name;;
+  }
+
+  dimension: direct_category {
+    description: ""
+    type: string
+    sql: ${TABLE}.direct_category;;
+  }
+
+  dimension: parent_category {
+    description: ""
+    type: string
+    sql: ${TABLE}.parent_category;;
+  }
+
+  dimension: sub_category_1 {
+    description: ""
+    type: string
+    sql: ${TABLE}.sub_category_1;;
+  }
+
+  dimension: sub_category_2 {
+    description: ""
+    type: string
+    sql: ${TABLE}.sub_category_2;;
   }
 
   measure: check_in {
