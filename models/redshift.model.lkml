@@ -83,12 +83,12 @@ explore: patients_stat {
 # BRAND DETAILS DASHBOARD SOURCE
 #---------------------------------------------------------
 
-explore: order_items_with_details {
-  sql_always_where: ${comp_id} = 3628;;
-}
-explore: daily_inventory  {
-  sql_always_where: ${comp_id} = 3628;;
-}
+# explore: order_items_with_details {
+#   sql_always_where: ${comp_id} = 3628;;
+# }
+# explore: daily_inventory  {
+#   sql_always_where: ${comp_id} = 3628;;
+# }
 
 #---------------------------------------------------------
 # AD-HOC REPORTS SOURCES
@@ -115,6 +115,20 @@ explore: brands {
 }
 
 explore: orders_with_details {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+}
+
+explore: order_items_with_details {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+}
+
+explore: daily_inventory  {
   access_filter: {
     field: comp_id
     user_attribute: allowed_customers
