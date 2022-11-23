@@ -2,14 +2,12 @@ view: order_items_with_details {
   sql_table_name: test.order_items_with_details ;;
 
 #---------------------------------------------------------
-# FILTERS AND PARAMETRS
+# FILTERS FOR PREFILTERED MEASURES
 #---------------------------------------------------------
 
   filter: date_time_filter {
-    # convert_tz: no
     type: date_time
     datatype: datetime
-    sql: ${confirmed_date} between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;
   }
 
 #---------------------------------------------------------
@@ -476,7 +474,7 @@ view: order_items_with_details {
 
 
 #---------------------------------------------------------
-# MEASURES
+# MEASURES BASIC
 #---------------------------------------------------------
   measure: count_rows {
     type: count
@@ -578,6 +576,40 @@ view: order_items_with_details {
     value_format_name: percent_1
   }
 
+#---------------------------------------------------------
+# MEASURES PREFILTERED
+#---------------------------------------------------------
+  measure:  sum_net_sales_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${net_sale} END;;
+    value_format_name: usd
+  }
+  measure:  sum_order_item_quantity_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${order_item_quantity} END;;
+    value_format_name: usd
+  }
+  measure:  sum_profit_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${profit} END;;
+    value_format_name: usd
+  }
+  measure:  sum_cogs_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${cogs} END;;
+    value_format_name: usd
+  }
+  measure:  avg_unit_price_in_range {
+    type: number
+    sql: CASE WHEN (${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %})
+      AND ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
+      THEN ${amount_sum} / coalesce(${quantity_sum}, NULL) END;;
+    value_format_name: usd
+  }
 
 #---------------------------------------------------------
 # FIELDS FOR DRILLING

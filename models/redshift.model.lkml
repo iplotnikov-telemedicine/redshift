@@ -78,17 +78,9 @@ explore: patients_stat {
   }
 }
 
-
-#---------------------------------------------------------
-# AD-HOC REPORTS SOURCES
-#---------------------------------------------------------
-# Customer Frequency Report for IO
 explore: monthly_orders_group_stat {}
 
 
-#---------------------------------------------------------
-# DICTIONARIES FOR FILTERS IN DIFFERENT REPORTS
-#---------------------------------------------------------
 explore: offices {
   access_filter: {
     field: office_comp_id
@@ -109,12 +101,6 @@ explore: brands {
   }
 }
 
-explore: orders_with_details {
-  access_filter: {
-    field: comp_id
-    user_attribute: allowed_customers
-  }
-}
 
 explore: companies {
   access_filter: {
@@ -123,10 +109,14 @@ explore: companies {
   }
 }
 
+explore: orders_with_details {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+}
 
-#---------------------------------------------------------
-# BRAND DETAILS DASHBOARD SOURCE
-#---------------------------------------------------------
+
 explore: order_items_with_details {
   access_filter: {
     field: comp_id
@@ -142,11 +132,4 @@ explore: order_items_with_details {
     fields: [comp_id, order_id, product_checkin_id, transaction_type_name]
   }
 
-}
-
-explore: daily_inventory  {
-  access_filter: {
-    field: comp_id
-    user_attribute: allowed_customers
-  }
 }

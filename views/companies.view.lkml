@@ -7,7 +7,7 @@ view: companies {
     sql: ${TABLE}.comp_id ;;
   }
 
-  dimension: accaunt_name {
+  dimension: account_name {
     type: string
     sql: ${TABLE}.domain_prefix ;;
   }

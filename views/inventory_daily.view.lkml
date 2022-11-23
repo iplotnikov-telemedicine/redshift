@@ -1,4 +1,4 @@
-view: daily_inventory {
+view: inventory_daily {
   sql_table_name: test.daily_inventory ;;
 
   dimension: number_of_days_filtered {
