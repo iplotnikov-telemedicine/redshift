@@ -63,6 +63,7 @@ view: inventory_daily {
 
   dimension: prod_name {
     description: ""
+    alias: [product_name]
     type: string
     sql: ${TABLE}.prod_name;;
   }

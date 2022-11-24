@@ -479,17 +479,17 @@ view: order_items_with_details {
   measure: count_rows {
     type: count
   }
-  measure: price_list {
+  measure: list_price {
     type: list
     list_field: amount
     value_format_name: usd
   }
-  measure: amount_sum {
+  measure: sum_amount {
     type: sum
     sql: ${amount} ;;
     value_format_name: usd
   }
-  measure: quantity_sum {
+  measure: sum_quantity {
     type: sum
     sql: ${quantity} ;;
     value_format_name: decimal_0
@@ -506,15 +506,22 @@ view: order_items_with_details {
   }
   measure: avg_unit_price {
     type: number
-    sql:CASE WHEN ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-          THEN ${amount_sum} / coalesce(${quantity_sum}, NULL)
+    sql:CASE WHEN ${sum_quantity} IS NOT NULL AND ${sum_quantity} <> 0
+          THEN ${sum_amount} / coalesce(${sum_quantity}, NULL)
+          ELSE Null END;;
+    value_format_name: usd
+  }
+  measure: avg_disc_unit_price {
+    type: number
+    sql:CASE WHEN ${sum_quantity} IS NOT NULL AND ${sum_quantity} <> 0
+          THEN (${sum_amount} - ${sum_gross_sale}) / coalesce(${sum_quantity}, NULL)
           ELSE Null END;;
     value_format_name: usd
   }
   measure: avg_unit_cogs{
     type: number
-    sql: CASE WHEN ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-          THEN ${sum_cogs} / coalesce(${quantity_sum}, NULL)
+    sql: CASE WHEN ${sum_quantity} IS NOT NULL AND ${sum_quantity} <> 0
+          THEN ${sum_cogs} / coalesce(${sum_quantity}, NULL)
           ELSE Null END;;
     value_format_name: usd
   }
@@ -558,24 +565,31 @@ view: order_items_with_details {
     sql:  ${net_sale};;
     value_format_name: usd
   }
-  measure: total_income {
+  measure: sum_income {
     type: sum
     sql: ${income} ;;
     value_format_name: usd
   }
-  measure: total_returned_amount {
+  measure: sum_returned_amount {
     type: sum
     sql: ${returned_amount} ;;
     value_format_name: usd
   }
-  measure: total_gross_margin_percent {
+  measure: gross_margin_percent {
     type: number
     sql:CASE WHEN ${sum_profit} IS NOT NULL AND ${sum_profit} <> 0
           THEN ${sum_profit} / coalesce(${sum_net_sales}, NULL)
           ELSE Null END;;
     value_format_name: percent_1
   }
-
+  measure: gross_discount_percent {
+    type: number
+    sql:CASE WHEN ${sum_profit} IS NOT NULL AND ${sum_profit} <> 0
+          THEN ${sum_profit} / coalesce(${sum_net_sales}, NULL)
+          ELSE Null END;;
+    value_format_name: percent_1
+  }
+#SUM(order_items_with_details.paid_amount)/SUM(order_items_with_details.amount + order_items_with_details.tax)
 #---------------------------------------------------------
 # MEASURES PREFILTERED
 #---------------------------------------------------------
@@ -606,8 +620,8 @@ view: order_items_with_details {
   measure:  avg_unit_price_in_range {
     type: number
     sql: CASE WHEN (${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %})
-      AND ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-      THEN ${amount_sum} / coalesce(${quantity_sum}, NULL) END;;
+      AND ${sum_quantity} IS NOT NULL AND ${sum_quantity} <> 0
+      THEN ${sum_amount} / coalesce(${sum_quantity}, NULL) END;;
     value_format_name: usd
   }
 

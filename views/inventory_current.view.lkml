@@ -49,6 +49,7 @@ view: inventory_current {
   }
 
   dimension: prod_name {
+    alias: [product_name]
     description: ""
     type: string
   }
