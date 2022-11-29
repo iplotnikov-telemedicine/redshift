@@ -24,14 +24,14 @@ test: inventory_daily_id_is_unique {
   }
 }
 
-test: inventory_current_id_is_unique {
-  explore_source: inventory_current {
-    column: primary_key {}
-    column: count_rows {}
-    sorts: [inventory_current.count_rows: desc]
-    limit: 1
-  }
-  assert: inventory_current_id_is_unique {
-    expression: ${inventory_current.count_rows} = 1 ;;
-  }
-}
+# test: inventory_current_id_is_unique {
+#   explore_source: inventory_current {
+#     column: primary_key {}
+#     column: count_rows {}
+#     sorts: [inventory_current.count_rows: desc]
+#     limit: 1
+#   }
+#   assert: inventory_current_id_is_unique {
+#     expression: ${inventory_current.count_rows} = 1 ;;
+#   }
+# }
