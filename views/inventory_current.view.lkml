@@ -21,69 +21,60 @@ view: inventory_current {
     primary_key:  yes
     sql: CONCAT(${comp_id}, CONCAT(${office_id}, ${product_id})) ;;
   }
-
   dimension: comp_id {
     description: ""
     type: number
   }
-
   dimension: account_name {
     description: ""
     type: string
   }
-
   dimension: office_id {
     description: ""
     type: number
   }
-
   dimension: office_name {
     description: ""
     suggest_persist_for: "24 hours"
     type: string
   }
-
   dimension: product_id {
     description: ""
     type: number
   }
-
   dimension: prod_name {
     alias: [product_name]
     description: ""
     type: string
   }
-
   dimension: brand_id {
     description: ""
     type: number
   }
-
   dimension: brand_name {
     description: ""
     type: string
   }
-
   dimension: direct_category {
     description: ""
     type: string
   }
-
   dimension: parent_category {
     description: ""
     type: string
   }
-
   dimension: sub_category_1 {
     description: ""
     type: string
   }
-
   dimension: sub_category_2 {
     description: ""
     type: string
   }
 
+  measure: count_rows {
+    type: count
+  }
   measure: inventory_turnover {
     description: ""
     type: sum
