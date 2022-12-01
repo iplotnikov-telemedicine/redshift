@@ -2,12 +2,22 @@ view: order_items_with_details {
   sql_table_name: test.order_items_with_details ;;
 
 #---------------------------------------------------------
-# FILTERS FOR PREFILTERED MEASURES
+# FILTERS AND PARAMETRS
 #---------------------------------------------------------
 
   filter: date_time_filter {
     type: date_time
     datatype: datetime
+  }
+  parameter: timeframe_picker {
+    view_label: "-- Parameters"
+    label: "Date Granularity"
+    type: unquoted
+    allowed_value: { value: "Day" }
+    allowed_value: { value: "Week" }
+    allowed_value: { value: "Month" }
+    allowed_value: { value: "Year" }
+    default_value: "Day"
   }
 
 #---------------------------------------------------------
@@ -494,6 +504,16 @@ view: order_items_with_details {
   dimension: is_test {
     type: yesno
     sql: ${count} <> ${order_item_quantity};;
+  }
+  dimension: date_dynamic {
+    type: string
+    description: "Use with timeframe picker to change date granularity"
+    sql:
+      {% if timeframe_picker._parameter_value == 'Day' %} ${confirmed_date}
+      {% elsif timeframe_picker._parameter_value == 'Week' %} ${confirmed_week}
+      {% elsif timeframe_picker._parameter_value == 'Month' %} ${confirmed_month}
+      {% elsif timeframe_picker._parameter_value == 'Year' %} ${confirmed_year}
+      {% else %} null {% endif %} ;;
   }
 
 #---------------------------------------------------------

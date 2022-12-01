@@ -36,7 +36,9 @@ explore: companies {
 
 
 
-# REPORTS: Brand Details (Top level statistics, Sales and Margin, Sales by Category)
+# REPORTS:
+# - Brand Details (Top level statistics, Sales and Margin, Sales by Category);
+# - Discount Overview (General)
 explore: sales_details {
   view_name: order_items_with_details
   access_filter: {
