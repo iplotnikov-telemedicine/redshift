@@ -1,5 +1,5 @@
 view: offices {
-  sql_table_name: staging.offices ;;
+  sql_table_name: test.stg_io__offices ;;
 
   dimension: office_id {
     type: number

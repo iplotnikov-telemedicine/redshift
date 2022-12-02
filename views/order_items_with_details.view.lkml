@@ -6,10 +6,18 @@ view: order_items_with_details {
 #---------------------------------------------------------
 
   filter: date_time_filter {
-    # convert_tz: no
     type: date_time
     datatype: datetime
-    sql: ${confirmed_date} between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;
+  }
+  parameter: timeframe_picker {
+    view_label: "-- Parameters"
+    label: "Date Granularity"
+    type: unquoted
+    allowed_value: { value: "Day" }
+    allowed_value: { value: "Week" }
+    allowed_value: { value: "Month" }
+    allowed_value: { value: "Year" }
+    default_value: "Day"
   }
 
 #---------------------------------------------------------
@@ -62,6 +70,18 @@ view: order_items_with_details {
   dimension: descr {
     type: string
     sql: ${TABLE}.descr ;;
+  }
+  dimension: vendor_name {
+    type: string
+    sql: ${TABLE}.vendor_name ;;
+  }
+  dimension: item_discount_name{
+    type: string
+    sql: ${TABLE}.item_discount_name ;;
+  }
+  dimension: cart_discount_name{
+    type: string
+    sql: ${TABLE}.cart_discount_name ;;
   }
   dimension: price_type {
     type: string
@@ -437,7 +457,7 @@ view: order_items_with_details {
   }
   dimension: unit_price {
     type: number
-    sql: CASE ${count} WHEN 0 THEN 0 ELSE ${amount} / ${count} - ${item_discount_amount} END ;;
+    sql: CASE ${count} WHEN 0 THEN 0 ELSE ${amount} / ${count} - ${item_discount_amount}/${count}  END ;;
     value_format_name: usd
   }
   dimension: order_item_quantity {
@@ -473,25 +493,56 @@ view: order_items_with_details {
     sql: ${net_sale} - ${cogs};;
     value_format_name: usd
   }
-
+  dimension: is_discounted {
+    type: yesno
+    sql: ${cart_discount_amount}>0 OR ${item_discount_amount}>0;;
+  }
+  dimension: discount_amount_calculated {
+    type: number
+    sql: ${amount} - ${gross_sale} ;;
+  }
+  dimension: is_test {
+    type: yesno
+    sql: ${count} <> ${order_item_quantity};;
+  }
+  dimension: date_dynamic {
+    type: string
+    description: "Use with timeframe picker to change date granularity"
+    sql:
+      {% if timeframe_picker._parameter_value == 'Day' %} ${confirmed_date}
+      {% elsif timeframe_picker._parameter_value == 'Week' %} ${confirmed_week}
+      {% elsif timeframe_picker._parameter_value == 'Month' %} ${confirmed_month}
+      {% elsif timeframe_picker._parameter_value == 'Year' %} ${confirmed_year}
+      {% else %} null {% endif %} ;;
+  }
 
 #---------------------------------------------------------
-# MEASURES
+# MEASURES BASIC
 #---------------------------------------------------------
   measure: count_rows {
     type: count
   }
-  measure: price_list {
+  measure: list_price {
     type: list
     list_field: amount
     value_format_name: usd
   }
-  measure: amount_sum {
+  measure: sum_amount {
     type: sum
     sql: ${amount} ;;
     value_format_name: usd
   }
-  measure: quantity_sum {
+  measure: sum_tax {
+    type: sum
+    sql: ${tax} ;;
+    value_format_name: usd
+  }
+  measure: sum_discount_amount_calculated {
+    type: sum
+    sql: ${discount_amount_calculated} ;;
+    value_format_name: usd
+  }
+  measure: sum_quantity {
     type: sum
     sql: ${quantity} ;;
     value_format_name: decimal_0
@@ -508,15 +559,22 @@ view: order_items_with_details {
   }
   measure: avg_unit_price {
     type: number
-    sql:CASE WHEN ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-          THEN ${amount_sum} / coalesce(${quantity_sum}, NULL)
+    sql:CASE WHEN ${sum_order_item_quantity} IS NOT NULL AND ${sum_order_item_quantity} <> 0
+          THEN (${sum_amount})/ coalesce(${sum_order_item_quantity}, NULL)
+          ELSE Null END;;
+    value_format_name: usd
+  }
+  measure: avg_unit_disc_price {
+    type: number
+    sql:CASE WHEN ${sum_order_item_quantity} IS NOT NULL AND ${sum_order_item_quantity} <> 0
+          THEN (${sum_gross_sale}) / coalesce(${sum_order_item_quantity}, NULL)
           ELSE Null END;;
     value_format_name: usd
   }
   measure: avg_unit_cogs{
     type: number
-    sql: CASE WHEN ${quantity_sum} IS NOT NULL AND ${quantity_sum} <> 0
-          THEN ${sum_cogs} / coalesce(${quantity_sum}, NULL)
+    sql: CASE WHEN ${sum_order_item_quantity} IS NOT NULL AND ${sum_order_item_quantity} <> 0
+          THEN ${sum_cogs} / coalesce(${sum_order_item_quantity}, NULL)
           ELSE Null END;;
     value_format_name: usd
   }
@@ -545,6 +603,12 @@ view: order_items_with_details {
     filters: [is_returned: "yes"]
     value_format_name: decimal_0
   }
+  measure: sum_order_item_quantity_discounted {
+    type: sum
+    sql: ${order_item_quantity} ;;
+    filters: [is_discounted: "yes"]
+    value_format_name: decimal_0
+  }
   measure: sum_discount_amount {
     type: sum
     sql: ${discount_amount} ;;
@@ -560,24 +624,90 @@ view: order_items_with_details {
     sql:  ${net_sale};;
     value_format_name: usd
   }
-  measure: total_income {
+  measure: sum_income {
     type: sum
     sql: ${income} ;;
     value_format_name: usd
   }
-  measure: total_returned_amount {
+  measure: sum_returned_amount {
     type: sum
     sql: ${returned_amount} ;;
     value_format_name: usd
   }
-  measure: total_gross_margin_percent {
+  measure: gross_margin_percent {
     type: number
     sql:CASE WHEN ${sum_profit} IS NOT NULL AND ${sum_profit} <> 0
           THEN ${sum_profit} / coalesce(${sum_net_sales}, NULL)
           ELSE Null END;;
     value_format_name: percent_1
   }
+  measure: gross_discount_percent {
+    type: number
+    sql:CASE WHEN ${sum_amount} IS NOT NULL AND ${sum_amount} <> 0
+          THEN (${sum_discount_amount_calculated}) / coalesce(${sum_amount}, NULL)
+          ELSE Null END;;
+    value_format_name: percent_1
+  }
 
+#---------------------------------------------------------
+# MEASURES PREFILTERED
+#---------------------------------------------------------
+  measure:  sum_net_sales_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${net_sale} END;;
+    value_format_name: usd
+  }
+  measure:  sum_gross_sales_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${gross_sale} END;;
+    value_format_name: usd
+  }
+  measure:  sum_order_item_quantity_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${order_item_quantity} END;;
+    value_format_name: decimal_0
+  }
+  measure:  sum_profit_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${profit} END;;
+    value_format_name: usd
+  }
+  measure:  sum_cogs_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${cogs} END;;
+    value_format_name: usd
+  }
+  measure:  sum_amount_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${amount} END;;
+    value_format_name: usd
+  }
+  measure:  sum_discount_amount_in_range {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${discount_amount_calculated} END;;
+    value_format_name: usd
+  }
+  measure:  avg_unit_price_in_range {
+    type: number
+    sql: CASE WHEN ${sum_order_item_quantity_in_range} IS NOT NULL AND ${sum_order_item_quantity_in_range} <> 0
+          THEN (${sum_amount_in_range}) / coalesce(${sum_order_item_quantity_in_range}, NULL)
+          ELSE Null END;;
+    value_format_name: usd
+  }
+  measure:  avg_unit_disc_price_in_range {
+    type: number
+    sql: CASE WHEN ${sum_order_item_quantity_in_range} IS NOT NULL AND ${sum_order_item_quantity_in_range} <> 0
+          THEN (${sum_gross_sales_in_range}) / coalesce(${sum_order_item_quantity_in_range}, NULL)
+          ELSE Null END;;
+    value_format_name: usd
+  }
 
 #---------------------------------------------------------
 # FIELDS FOR DRILLING
