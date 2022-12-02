@@ -150,3 +150,5 @@ explore: daily_inventory  {
     user_attribute: allowed_customers
   }
 }
+
+explore: patients  {}
