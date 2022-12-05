@@ -1,6 +1,6 @@
 view: inventory_current {
   derived_table: {
-    explore_source: daily_inventory {
+    explore_source: inventory_daily {
       column: comp_id {}
       column: account_name {}
       column: office_id {}

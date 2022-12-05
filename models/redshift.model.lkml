@@ -135,7 +135,7 @@ explore: order_items_with_details {
 }
 
 
-explore: daily_inventory  {
+explore: inventory_daily {
   access_filter: {
     field: comp_id
     user_attribute: allowed_customers

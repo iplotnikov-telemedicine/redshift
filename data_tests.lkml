@@ -12,15 +12,15 @@ test: sales_details_id_is_unique {
   }
 }
 
-test: daily_inventory_id_is_unique {
-  explore_source: daily_inventory {
+test: inventory_daily_id_is_unique {
+  explore_source: inventory_daily {
     column: primary_key {}
     column: count_rows {}
-    sorts: [daily_inventory.count_rows: desc]
+    sorts: [inventory_daily.count_rows: desc]
     limit: 1
   }
-  assert: daily_inventory_id_is_unique {
-    expression: ${daily_inventory.count_rows} = 1 ;;
+  assert: inventory_daily_id_is_unique {
+    expression: ${inventory_daily.count_rows} = 1 ;;
   }
 }
 

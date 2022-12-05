@@ -1,4 +1,4 @@
-view: daily_inventory {
+view: inventory_daily {
   sql_table_name: test.daily_inventory ;;
 
 #---------------------------------------------------------
@@ -10,6 +10,17 @@ view: daily_inventory {
     type: date_time
     datatype: datetime
   }
+  parameter: timeframe_picker {
+    view_label: "-- Parameters"
+    label: "Date Granularity"
+    type: unquoted
+    allowed_value: { value: "Day" }
+    allowed_value: { value: "Week" }
+    allowed_value: { value: "Month" }
+    allowed_value: { value: "Year" }
+    default_value: "Day"
+  }
+
 
 #---------------------------------------------------------
 # ORIGINAL TABLE FEILDS AS DIMENSIONS
@@ -100,6 +111,16 @@ view: daily_inventory {
   dimension: primary_key {
     primary_key:  yes
     sql: CONCAT(${TABLE}.report_date, CONCAT(${TABLE}.comp_id, CONCAT(${TABLE}.office_id, ${TABLE}.product_id))) ;;
+  }
+  dimension: date_dynamic {
+    type: string
+    description: "Use with timeframe picker to change date granularity"
+    sql:
+      {% if timeframe_picker._parameter_value == 'Day' %} ${report_date_date}
+      {% elsif timeframe_picker._parameter_value == 'Week' %} ${report_date_week}
+      {% elsif timeframe_picker._parameter_value == 'Month' %} ${report_date_month}
+      {% elsif timeframe_picker._parameter_value == 'Year' %} ${report_date_year}
+      {% else %} null {% endif %} ;;
   }
 
 #---------------------------------------------------------

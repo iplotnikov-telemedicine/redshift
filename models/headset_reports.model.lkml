@@ -55,7 +55,7 @@ explore: sales_details {
 }
 
 # REPORTS: Brand Details (Sales and Stock)
-explore: daily_inventory  {
+explore: inventory_daily  {
   access_filter: {
     field: comp_id
     user_attribute: allowed_customers
