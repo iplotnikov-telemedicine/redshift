@@ -511,10 +511,6 @@ view: order_items_with_details {
     type: number
     sql: ${amount} - ${gross_sale} ;;
   }
-  dimension: is_test {
-    type: yesno
-    sql: ${count} <> ${order_item_quantity};;
-  }
   dimension: date_dynamic {
     type: string
     description: "Use with timeframe picker to change date granularity"
@@ -527,13 +523,13 @@ view: order_items_with_details {
   }
   dimension: discount_tier {
     type: tier
-    tiers: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
-    style: interval
-    value_format_name: percent_0
+    tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    style: integer
+    value_format: "0%"
     sql:
           CASE WHEN ${amount} IS NOT NULL AND ${amount} <> 0
           THEN (${discount_amount_calculated}) / coalesce(${amount}, NULL)
-          ELSE Null END
+          ELSE Null END * 100
         ;;
   }
   dimension: discount_name_combined {
