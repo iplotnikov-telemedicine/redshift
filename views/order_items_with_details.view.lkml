@@ -520,7 +520,12 @@ view: order_items_with_details {
 # MEASURES BASIC
 #---------------------------------------------------------
   measure: count_rows {
+    label: "order_items_count"
     type: count
+  }
+  measure: orders_count {
+    type: count_distinct
+    sql: ${order_id} ;;
   }
   measure: list_price {
     type: list
