@@ -10,8 +10,7 @@ view: order_items_with_details {
     datatype: datetime
   }
   parameter: timeframe_picker {
-    view_label: "-- Parameters"
-    label: "Date Granularity"
+    label: "Datetime Granularity"
     type: unquoted
     allowed_value: { value: "Day" }
     allowed_value: { value: "Week" }
@@ -19,6 +18,14 @@ view: order_items_with_details {
     allowed_value: { value: "Year" }
     default_value: "Day"
   }
+  parameter: dimension_picker {
+    label: "Dimension Selector"
+    type: unquoted
+    allowed_value: { value: "Discount_Bucket" }
+    allowed_value: { value: "Discount_Name" }
+    default_value: "Discount_Bucket"
+  }
+
 
 #---------------------------------------------------------
 # ORIGINAL TABLE FEILDS AS DIMENSIONS
@@ -533,8 +540,14 @@ view: order_items_with_details {
     type: string
     sql: CONCAT(NVL(${item_discount_name},''), CONCAT(' || ', NVL(${cart_discount_name},'')));;
   }
-
-
+  dimension: dimension_by_selector {
+    type: string
+    description: "Use with dimension picker to change dimension"
+    sql:
+      {% if dimension_picker._parameter_value == 'Discount_Bucket' %} ${discount_tier}
+      {% elsif dimension_picker._parameter_value == 'Discount_Name' %} ${discount_name_combined}
+      {% else %} null {% endif %} ;;
+  }
 
 
 #---------------------------------------------------------
