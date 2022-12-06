@@ -81,7 +81,7 @@ view: order_items_with_details {
   }
   dimension: cart_discount_name{
     type: string
-    sql: ${TABLE}.cart_discount_name ;;
+    sql: ${TABLE}.cart_discount_name;;
   }
   dimension: price_type {
     type: string
@@ -447,6 +447,9 @@ view: order_items_with_details {
     sql: ${TABLE}.patient_zip_name ;;
   }
 
+
+
+
 #---------------------------------------------------------
 # DERIVED DIMENSIONS
 #---------------------------------------------------------
@@ -515,6 +518,24 @@ view: order_items_with_details {
       {% elsif timeframe_picker._parameter_value == 'Year' %} ${confirmed_year}
       {% else %} null {% endif %} ;;
   }
+  dimension: discount_tier {
+    type: tier
+    tiers: [0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0]
+    style: interval
+    value_format_name: percent_0
+    sql:
+          CASE WHEN ${amount} IS NOT NULL AND ${amount} <> 0
+          THEN (${discount_amount_calculated}) / coalesce(${amount}, NULL)
+          ELSE Null END
+        ;;
+  }
+  dimension: discount_name_combined {
+    type: string
+    sql: CONCAT(NVL(${item_discount_name},''), CONCAT(' || ', NVL(${cart_discount_name},'')));;
+  }
+
+
+
 
 #---------------------------------------------------------
 # MEASURES BASIC
@@ -649,6 +670,9 @@ view: order_items_with_details {
     value_format_name: percent_1
   }
 
+
+
+
 #---------------------------------------------------------
 # MEASURES PREFILTERED
 #---------------------------------------------------------
@@ -708,6 +732,10 @@ view: order_items_with_details {
           ELSE Null END;;
     value_format_name: usd
   }
+
+
+
+
 
 #---------------------------------------------------------
 # FIELDS FOR DRILLING
