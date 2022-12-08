@@ -10,7 +10,7 @@ view: order_items_with_details {
     datatype: datetime
   }
   parameter: timeframe_picker {
-    label: "Datetime Granularity"
+    label: "Datetime Selector"
     type: unquoted
     allowed_value: { value: "Day" }
     allowed_value: { value: "Week" }
@@ -23,6 +23,7 @@ view: order_items_with_details {
     type: unquoted
     allowed_value: { value: "Discount_Bucket" }
     allowed_value: { value: "Discount_Name" }
+    allowed_value: { value: "Vendor_Name" }
     default_value: "Discount_Bucket"
   }
 
@@ -525,7 +526,7 @@ view: order_items_with_details {
     type: tier
     tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
     style: integer
-    value_format: "0%"
+    value_format: "0"
     sql:
           CASE WHEN ${amount} IS NOT NULL AND ${amount} <> 0
           THEN (${discount_amount_calculated}) / coalesce(${amount}, NULL)
@@ -534,7 +535,12 @@ view: order_items_with_details {
   }
   dimension: discount_name_combined {
     type: string
-    sql: CONCAT(NVL(${item_discount_name},''), CONCAT(' || ', NVL(${cart_discount_name},'')));;
+    sql: CONCAT(NVL2(${item_discount_name},CONCAT(${item_discount_name}, ' '), ''), NVL(${cart_discount_name},''));;
+  }
+  dimension: has_discount_name {
+    type: yesno
+    sql: (${item_discount_name} is not null and ${item_discount_name} <> '')
+          or (${cart_discount_name} is not null and ${cart_discount_name} <> '');;
   }
   dimension: dimension_by_selector {
     type: string
@@ -542,6 +548,7 @@ view: order_items_with_details {
     sql:
       {% if dimension_picker._parameter_value == 'Discount_Bucket' %} ${discount_tier}
       {% elsif dimension_picker._parameter_value == 'Discount_Name' %} ${discount_name_combined}
+      {% elsif dimension_picker._parameter_value == 'Vendor_Name' %} ${vendor_name}
       {% else %} null {% endif %} ;;
   }
 
@@ -550,7 +557,12 @@ view: order_items_with_details {
 # MEASURES BASIC
 #---------------------------------------------------------
   measure: count_rows {
+    label: "Order Items Count"
     type: count
+  }
+  measure: orders_count {
+    type: count_distinct
+    sql: ${order_id} ;;
   }
   measure: list_price {
     type: list
@@ -749,5 +761,5 @@ view: order_items_with_details {
 #---------------------------------------------------------
 # FIELDS FOR DRILLING
 #---------------------------------------------------------
-
+  drill_fields: [discount_name_combined, order_id, order_number, id, product_name, office_name, amount, paid_amount, tax, gross_sale, order_item_quantity]
 }

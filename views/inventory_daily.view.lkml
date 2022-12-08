@@ -11,7 +11,6 @@ view: inventory_daily {
     datatype: datetime
   }
   parameter: timeframe_picker {
-    view_label: "-- Parameters"
     label: "Date Granularity"
     type: unquoted
     allowed_value: { value: "Day" }
@@ -170,6 +169,11 @@ view: inventory_daily {
     type: sum
     sql: ${TABLE}.sell ;;
   }
+  measure: abs_sell {
+    description: ""
+    type: sum
+    sql: -${TABLE}.sell ;;
+  }
   measure: return {
     description: ""
     type: sum
@@ -180,9 +184,8 @@ view: inventory_daily {
     type: sum
     sql: ${TABLE}.inventory_turnover ;;
   }
-  measure: end_of_day_inventory {
-    description: ""
-    type: sum
-    sql: ${TABLE}.end_of_day_inventory ;;
-  }
+
+
+  drill_fields: [office_id, office_name, product_id, prod_name, check_in, transfer_in, transfer_out, transfer_in_another_product,
+    transfer_out_another_product, adjusted_increase, adjusted_decrease, sell, return, inventory_turnover]
 }
