@@ -10,8 +10,7 @@ view: order_items_with_details {
     datatype: datetime
   }
   parameter: timeframe_picker {
-    view_label: "-- Parameters"
-    label: "Date Granularity"
+    label: "Datetime Selector"
     type: unquoted
     allowed_value: { value: "Day" }
     allowed_value: { value: "Week" }
@@ -19,6 +18,15 @@ view: order_items_with_details {
     allowed_value: { value: "Year" }
     default_value: "Day"
   }
+  parameter: dimension_picker {
+    label: "Dimension Selector"
+    type: unquoted
+    allowed_value: { value: "Discount_Bucket" }
+    allowed_value: { value: "Discount_Name" }
+    allowed_value: { value: "Vendor_Name" }
+    default_value: "Discount_Bucket"
+  }
+
 
 #---------------------------------------------------------
 # ORIGINAL TABLE FEILDS AS DIMENSIONS
@@ -81,7 +89,7 @@ view: order_items_with_details {
   }
   dimension: cart_discount_name{
     type: string
-    sql: ${TABLE}.cart_discount_name ;;
+    sql: ${TABLE}.cart_discount_name;;
   }
   dimension: price_type {
     type: string
@@ -447,6 +455,9 @@ view: order_items_with_details {
     sql: ${TABLE}.patient_zip_name ;;
   }
 
+
+
+
 #---------------------------------------------------------
 # DERIVED DIMENSIONS
 #---------------------------------------------------------
@@ -498,10 +509,6 @@ view: order_items_with_details {
     type: number
     sql: ${amount} - ${gross_sale} ;;
   }
-  dimension: is_test {
-    type: yesno
-    sql: ${count} <> ${order_item_quantity};;
-  }
   dimension: date_dynamic {
     type: string
     description: "Use with timeframe picker to change date granularity"
@@ -512,12 +519,42 @@ view: order_items_with_details {
       {% elsif timeframe_picker._parameter_value == 'Year' %} ${confirmed_year}
       {% else %} null {% endif %} ;;
   }
+  dimension: discount_tier {
+    type: tier
+    tiers: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    style: integer
+    value_format: "0"
+    sql:
+          CASE WHEN ${amount} IS NOT NULL AND ${amount} <> 0
+          THEN (${discount_amount_calculated}) / coalesce(${amount}, NULL)
+          ELSE Null END * 100
+        ;;
+  }
+  dimension: discount_name_combined {
+    type: string
+    sql: CONCAT(NVL2(${item_discount_name},CONCAT(${item_discount_name}, ' '), ''), NVL(${cart_discount_name},''));;
+  }
+  dimension: has_discount_name {
+    type: yesno
+    sql: (${item_discount_name} is not null and ${item_discount_name} <> '')
+          or (${cart_discount_name} is not null and ${cart_discount_name} <> '');;
+  }
+  dimension: dimension_by_selector {
+    type: string
+    description: "Use with dimension picker to change dimension"
+    sql:
+      {% if dimension_picker._parameter_value == 'Discount_Bucket' %} ${discount_tier}
+      {% elsif dimension_picker._parameter_value == 'Discount_Name' %} ${discount_name_combined}
+      {% elsif dimension_picker._parameter_value == 'Vendor_Name' %} ${vendor_name}
+      {% else %} null {% endif %} ;;
+  }
+
 
 #---------------------------------------------------------
 # MEASURES BASIC
 #---------------------------------------------------------
   measure: count_rows {
-    label: "order_items_count"
+    label: "Order Items Count"
     type: count
   }
   measure: orders_count {
@@ -641,6 +678,9 @@ view: order_items_with_details {
     value_format_name: percent_1
   }
 
+
+
+
 #---------------------------------------------------------
 # MEASURES PREFILTERED
 #---------------------------------------------------------
@@ -697,8 +737,12 @@ view: order_items_with_details {
     value_format_name: usd
   }
 
+
+
+
+
 #---------------------------------------------------------
 # FIELDS FOR DRILLING
 #---------------------------------------------------------
-
+  drill_fields: [discount_name_combined, order_id, order_number, id, product_name, office_name, amount, paid_amount, tax, gross_sale, order_item_quantity]
 }

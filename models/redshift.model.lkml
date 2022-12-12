@@ -109,6 +109,13 @@ explore: companies {
   }
 }
 
+explore: customers {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+}
+
 explore: orders_with_details {
   access_filter: {
     field: comp_id
