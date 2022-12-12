@@ -472,10 +472,7 @@ view: order_items_with_details {
   }
   dimension: refund_wo_tax {
     type: number
-    sql: CASE WHEN ${paid_amount} IS NOT NULL AND ${paid_amount} <> 0
-          THEN ${returned_amount} - (${returned_amount} * ${tax}
-          / coalesce(${paid_amount}, NULL))
-          ELSE 0 END;;
+    sql: COALESCE(${returned_amount} - (${returned_amount} * ${tax} / NULLIF(${paid_amount}, 0)), 0) ;;
     value_format_name: usd
   }
   dimension: net_sale {
@@ -564,23 +561,17 @@ view: order_items_with_details {
   }
   measure: avg_unit_price {
     type: number
-    sql:CASE WHEN ${sum_order_item_quantity} IS NOT NULL AND ${sum_order_item_quantity} <> 0
-          THEN (${sum_amount})/ coalesce(${sum_order_item_quantity}, NULL)
-          ELSE Null END;;
+    sql: ${sum_amount} / NULLIF(${sum_order_item_quantity}, 0) ;;
     value_format_name: usd
   }
   measure: avg_unit_disc_price {
     type: number
-    sql:CASE WHEN ${sum_order_item_quantity} IS NOT NULL AND ${sum_order_item_quantity} <> 0
-          THEN (${sum_gross_sale}) / coalesce(${sum_order_item_quantity}, NULL)
-          ELSE Null END;;
+    sql: ${sum_gross_sale} / NULLIF(${sum_order_item_quantity}, 0) ;;
     value_format_name: usd
   }
   measure: avg_unit_cogs{
     type: number
-    sql: CASE WHEN ${sum_order_item_quantity} IS NOT NULL AND ${sum_order_item_quantity} <> 0
-          THEN ${sum_cogs} / coalesce(${sum_order_item_quantity}, NULL)
-          ELSE Null END;;
+    sql: ${sum_cogs} / NULLIF(${sum_order_item_quantity}, 0) ;;
     value_format_name: usd
   }
   measure: sum_total_amount {
@@ -641,16 +632,12 @@ view: order_items_with_details {
   }
   measure: gross_margin_percent {
     type: number
-    sql:CASE WHEN ${sum_profit} IS NOT NULL AND ${sum_profit} <> 0
-          THEN ${sum_profit} / coalesce(${sum_net_sales}, NULL)
-          ELSE Null END;;
+    sql: ${sum_profit} / NULLIF(${sum_net_sales}, 0) ;;
     value_format_name: percent_1
   }
   measure: gross_discount_percent {
     type: number
-    sql:CASE WHEN ${sum_amount} IS NOT NULL AND ${sum_amount} <> 0
-          THEN (${sum_discount_amount_calculated}) / coalesce(${sum_amount}, NULL)
-          ELSE Null END;;
+    sql: ${sum_discount_amount_calculated} / NULLIF(${sum_amount}, 0) ;;
     value_format_name: percent_1
   }
 
@@ -701,16 +688,12 @@ view: order_items_with_details {
   }
   measure:  avg_unit_price_in_range {
     type: number
-    sql: CASE WHEN ${sum_order_item_quantity_in_range} IS NOT NULL AND ${sum_order_item_quantity_in_range} <> 0
-          THEN (${sum_amount_in_range}) / coalesce(${sum_order_item_quantity_in_range}, NULL)
-          ELSE Null END;;
+    sql: ${sum_amount_in_range} / NULLIF(${sum_order_item_quantity_in_range}, 0) ;;
     value_format_name: usd
   }
   measure:  avg_unit_disc_price_in_range {
     type: number
-    sql: CASE WHEN ${sum_order_item_quantity_in_range} IS NOT NULL AND ${sum_order_item_quantity_in_range} <> 0
-          THEN (${sum_gross_sales_in_range}) / coalesce(${sum_order_item_quantity_in_range}, NULL)
-          ELSE Null END;;
+    sql: ${sum_gross_sales_in_range} / NULLIF(${sum_order_item_quantity_in_range}, 0) ;;
     value_format_name: usd
   }
 
