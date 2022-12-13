@@ -10,7 +10,7 @@ view: order_items_with_details {
     datatype: datetime
   }
   parameter: timeframe_picker {
-    label: "Datetime Selector"
+    label: "Date Granularity"
     type: unquoted
     allowed_value: { value: "Day" }
     allowed_value: { value: "Week" }
