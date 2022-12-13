@@ -466,7 +466,7 @@ view: order_items_with_details {
     primary_key: yes
     sql: CONCAT(${comp_id}, CONCAT(000, ${id})) ;;
   }
-  dimension: benchmark_months {
+  dimension: is_benchmark_month {
     type: yesno
     sql: ${confirmed_date} >= DATEADD(month,-1,DATE_TRUNC('month',current_date))
       or (${confirmed_date} >= DATEADD(month,-12,DATE_TRUNC('month',current_date))
