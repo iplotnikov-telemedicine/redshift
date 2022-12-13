@@ -27,6 +27,10 @@ view: order_items_with_details {
     allowed_value: { value: "Brand_Name" }
     default_value: "Discount_Bucket"
   }
+  parameter: product_category_picker {
+    label: "Selected Category"
+    suggest_dimension: product_parent_category
+  }
 
 
 #---------------------------------------------------------
@@ -554,6 +558,11 @@ view: order_items_with_details {
       {% elsif dimension_picker._parameter_value == 'Vendor_Name' %} ${vendor_name}
       {% elsif dimension_picker._parameter_value == 'Brand_Name' %} ${brand_name}
       {% else %} null {% endif %} ;;
+  }
+  dimension: is_product_category_selected {
+    type: yesno
+    description: "Use with dimension picker to change dimension"
+    sql: {{ product_category_picker._parameter_value }} = ${product_parent_category} ;;
   }
 
 
