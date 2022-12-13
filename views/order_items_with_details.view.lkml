@@ -24,6 +24,7 @@ view: order_items_with_details {
     allowed_value: { value: "Discount_Bucket" }
     allowed_value: { value: "Discount_Name" }
     allowed_value: { value: "Vendor_Name" }
+    allowed_value: { value: "Brand_Name" }
     default_value: "Discount_Bucket"
   }
 
@@ -461,10 +462,15 @@ view: order_items_with_details {
 #---------------------------------------------------------
 # DERIVED DIMENSIONS
 #---------------------------------------------------------
-
   dimension: primary_key {
     primary_key: yes
     sql: CONCAT(${comp_id}, CONCAT(000, ${id})) ;;
+  }
+  dimension: benchmark_months {
+    type: yesno
+    sql: ${confirmed_date} >= DATEADD(month,-1,DATE_TRUNC('month',current_date))
+      or (${confirmed_date} >= DATEADD(month,-12,DATE_TRUNC('month',current_date))
+        and ${confirmed_date} < DATEADD(month,-11,DATE_TRUNC('month',current_date)));;
   }
   dimension: unit_price {
     type: number
@@ -549,6 +555,7 @@ view: order_items_with_details {
       {% if dimension_picker._parameter_value == 'Discount_Bucket' %} ${discount_tier}
       {% elsif dimension_picker._parameter_value == 'Discount_Name' %} ${discount_name_combined}
       {% elsif dimension_picker._parameter_value == 'Vendor_Name' %} ${vendor_name}
+      {% elsif dimension_picker._parameter_value == 'Brand_Name' %} ${brand_name}
       {% else %} null {% endif %} ;;
   }
 

@@ -11,7 +11,7 @@ view: inventory_daily {
     datatype: datetime
   }
   parameter: timeframe_picker {
-    label: "Date Granularity"
+    label: "Datetime Selector"
     type: unquoted
     allowed_value: { value: "Day" }
     allowed_value: { value: "Week" }
