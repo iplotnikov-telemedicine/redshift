@@ -1,20 +1,23 @@
 view: inventory_current {
   derived_table: {
-    explore_source: inventory_daily {
-      column: comp_id {}
-      column: account_name {}
-      column: office_id {}
-      column: office_name {}
-      column: product_id {}
-      column: prod_name {}
-      column: brand_id {}
-      column: brand_name {}
-      column: direct_category {}
-      column: parent_category {}
-      column: sub_category_1 {}
-      column: sub_category_2 {}
-      column: inventory_turnover {}
-    }
+    sql:
+      select
+          comp_id,
+          office_id,
+          product_id,
+          max(brand_id) as brand_id,
+          max(domain_prefix) as account_name,
+          max(office_name) as office_name,
+          max(prod_name) as prod_name,
+          max(brand_name) as brand_name,
+          max(direct_category) as direct_category,
+          max(parent_category) as parent_category,
+          max(sub_category_1) as sub_category_1,
+          max(sub_category_2) as sub_category_2,
+          sum(inventory_turnover) as inventory_turnover
+      from test.daily_inventory
+      group by 1,2,3
+    ;;
   }
 
   dimension: primary_key {
@@ -25,31 +28,31 @@ view: inventory_current {
     description: ""
     type: number
   }
-  dimension: account_name {
-    description: ""
-    type: string
-  }
   dimension: office_id {
     description: ""
     type: number
+  }
+  dimension: product_id {
+    description: ""
+    type: number
+  }
+  dimension: brand_id {
+    description: ""
+    type: number
+  }
+  dimension: account_name {
+    description: ""
+    type: string
   }
   dimension: office_name {
     description: ""
     suggest_persist_for: "24 hours"
     type: string
   }
-  dimension: product_id {
-    description: ""
-    type: number
-  }
   dimension: prod_name {
     alias: [product_name]
     description: ""
     type: string
-  }
-  dimension: brand_id {
-    description: ""
-    type: number
   }
   dimension: brand_name {
     description: ""
@@ -71,7 +74,6 @@ view: inventory_current {
     description: ""
     type: string
   }
-
   measure: count_rows {
     type: count
   }

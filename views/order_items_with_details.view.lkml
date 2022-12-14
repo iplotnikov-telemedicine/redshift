@@ -117,12 +117,12 @@ view: order_items_with_details {
   }
   dimension: quantity {
     type: number
-    value_format_name: decimal_0
+    value_format_name: decimal_2
     sql: ${TABLE}.qty ;;
   }
   dimension: quantity_free {
     type: number
-    value_format_name: decimal_0
+    value_format_name: decimal_2
     sql: ${TABLE}.qty_free ;;
   }
   dimension: amount {
@@ -484,7 +484,7 @@ view: order_items_with_details {
   dimension: order_item_quantity {
     type: number
     sql: (${quantity} + ${quantity_free}) * ${count};;
-    value_format_name: decimal_0
+    value_format_name: decimal_2
   }
   dimension: gross_sale {
     type: number
