@@ -113,6 +113,7 @@ view: inventory_daily {
   }
   dimension: date_dynamic {
     type: string
+    label_from_parameter: timeframe_picker
     description: "Use with timeframe picker to change date granularity"
     sql:
       {% if timeframe_picker._parameter_value == 'Day' %} ${report_date_date}

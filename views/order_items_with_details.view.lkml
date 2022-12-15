@@ -521,6 +521,7 @@ view: order_items_with_details {
   }
   dimension: date_dynamic {
     type: string
+    label_from_parameter: timeframe_picker
     description: "Use with timeframe picker to change date granularity"
     sql:
       {% if timeframe_picker._parameter_value == 'Day' %} ${confirmed_date}
