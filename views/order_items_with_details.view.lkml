@@ -551,6 +551,7 @@ view: order_items_with_details {
           or (${cart_discount_name} is not null and ${cart_discount_name} <> '');;
   }
   dimension: dimension_by_selector {
+    label_from_parameter: dimension_picker
     type: string
     description: "Use with dimension picker to change dimension"
     sql:
@@ -559,6 +560,14 @@ view: order_items_with_details {
       {% elsif dimension_picker._parameter_value == "'Vendor'" %} ${vendor_name}
       {% elsif dimension_picker._parameter_value == "'Brand'" %} ${brand_name}
       {% else %} NULL {% endif %} ;;
+  }
+  dimension: selected_category {
+    label_from_parameter: product_category_picker
+    type: string
+    description: "Use with dimension picker to change product category"
+    sql:
+      {% if product_category_picker._parameter_value != null and product_category_picker._parameter_value != '' %}
+      {{ product_category_picker._parameter_value }} {% else %} 'All' {% endif %} ;;
   }
   dimension: is_product_category_selected {
     type: yesno
