@@ -20,12 +20,12 @@ view: order_items_with_details {
   }
   parameter: dimension_picker {
     label: "Dimension Selector"
-    type: unquoted
-    allowed_value: { value: "Discount_Bucket" }
-    allowed_value: { value: "Discount_Name" }
-    allowed_value: { value: "Vendor_Name" }
-    allowed_value: { value: "Brand_Name" }
-    default_value: "Discount_Bucket"
+    type: string
+    allowed_value: { value: "Discount Bucket" }
+    allowed_value: { value: "Discount Name" }
+    allowed_value: { value: "Vendor" }
+    allowed_value: { value: "Brand" }
+    default_value: "Discount Bucket"
   }
   parameter: product_category_picker {
     label: "Selected Category"
@@ -551,14 +551,23 @@ view: order_items_with_details {
           or (${cart_discount_name} is not null and ${cart_discount_name} <> '');;
   }
   dimension: dimension_by_selector {
+    label_from_parameter: dimension_picker
     type: string
     description: "Use with dimension picker to change dimension"
     sql:
-      {% if dimension_picker._parameter_value == 'Discount_Bucket' %} ${discount_tier}
-      {% elsif dimension_picker._parameter_value == 'Discount_Name' %} ${discount_name_combined}
-      {% elsif dimension_picker._parameter_value == 'Vendor_Name' %} ${vendor_name}
-      {% elsif dimension_picker._parameter_value == 'Brand_Name' %} ${brand_name}
-      {% else %} null {% endif %} ;;
+      {% if dimension_picker._parameter_value == "'Discount Bucket'" %} ${discount_tier}
+      {% elsif dimension_picker._parameter_value == "'Discount Name'" %} ${discount_name_combined}
+      {% elsif dimension_picker._parameter_value == "'Vendor'" %} ${vendor_name}
+      {% elsif dimension_picker._parameter_value == "'Brand'" %} ${brand_name}
+      {% else %} NULL {% endif %} ;;
+  }
+  dimension: selected_category {
+    label_from_parameter: product_category_picker
+    type: string
+    description: "Use with dimension picker to change product category"
+    sql:
+      {% if product_category_picker._parameter_value != null and product_category_picker._parameter_value != '' %}
+      {{ product_category_picker._parameter_value }} {% else %} 'All' {% endif %} ;;
   }
   dimension: is_product_category_selected {
     type: yesno
@@ -697,7 +706,6 @@ view: order_items_with_details {
 
 
 
-
 #---------------------------------------------------------
 # MEASURES PREFILTERED
 #---------------------------------------------------------
@@ -751,6 +759,11 @@ view: order_items_with_details {
   measure:  avg_unit_disc_price_in_range {
     type: number
     sql: ${sum_gross_sales_in_range} / NULLIF(${sum_order_item_quantity_in_range}, 0) ;;
+    value_format_name: usd
+  }
+  measure: avg_cost_per_unit {
+    type: average
+    sql: ${product_cost} ;;
     value_format_name: usd
   }
 

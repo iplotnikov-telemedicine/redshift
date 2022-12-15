@@ -4,7 +4,7 @@ view: product_transactions {
   dimension: surrogate_key {
     primary_key: yes
     type: number
-    sql: CONCAT(${comp_id}::string, ${id}::string) ;;
+    sql: CONCAT(${comp_id}::varchar, ${id}::varchar) ;;
   }
 
   dimension: comp_id {
@@ -95,6 +95,12 @@ view: product_transactions {
   dimension: item_qty {
     type: number
     sql: ${qty_total}*${item_type_multiplier} ;;
+  }
+
+  measure: quantity_sold {
+    type: sum
+    sql: ${item_qty} ;;
+    filters: [is_sold: "yes"]
   }
 
   dimension: is_checked_in {

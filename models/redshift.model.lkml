@@ -136,7 +136,7 @@ explore: order_items_with_details {
       AND ${order_items_with_details.product_checkin_id} = ${product_transactions.product_checkin_id} ;;
     type: inner
     relationship: many_to_one
-    fields: [comp_id, order_id, product_checkin_id, transaction_type_name]
+    # fields: [comp_id, order_id, product_checkin_id, transaction_type_name, quantity_sold]
   }
 
 }
