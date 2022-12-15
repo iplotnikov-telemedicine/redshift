@@ -24,6 +24,7 @@ view: inventory_current {
   dimension: account_name {
     description: ""
     type: string
+    sql: ${TABLE}.domain_prefix;;
   }
   dimension: office_name {
     description: ""
