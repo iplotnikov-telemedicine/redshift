@@ -1,24 +1,5 @@
 view: inventory_current {
-  derived_table: {
-    sql:
-      select
-          comp_id,
-          office_id,
-          product_id,
-          max(brand_id) as brand_id,
-          max(domain_prefix) as account_name,
-          max(office_name) as office_name,
-          max(prod_name) as prod_name,
-          max(brand_name) as brand_name,
-          max(direct_category) as direct_category,
-          max(parent_category) as parent_category,
-          max(sub_category_1) as sub_category_1,
-          max(sub_category_2) as sub_category_2,
-          sum(inventory_turnover) as inventory_turnover
-      from test.daily_inventory
-      group by 1,2,3
-    ;;
-  }
+  sql_table_name: test.inventory_current ;;
 
   dimension: primary_key {
     primary_key:  yes
@@ -43,6 +24,7 @@ view: inventory_current {
   dimension: account_name {
     description: ""
     type: string
+    sql: ${TABLE}.domain_prefix;;
   }
   dimension: office_name {
     description: ""
@@ -74,11 +56,15 @@ view: inventory_current {
     description: ""
     type: string
   }
+  dimension: inventory_current {
+    description: ""
+    type: number
+  }
   measure: count_rows {
     type: count
   }
-  measure: inventory_turnover {
-    description: ""
+  measure: sum_inventory_current {
     type: sum
+    sql: ${TABLE}.inventory_current ;;
   }
 }
