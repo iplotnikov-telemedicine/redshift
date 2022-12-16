@@ -56,11 +56,15 @@ view: inventory_current {
     description: ""
     type: string
   }
+  dimension: inventory_current {
+    description: ""
+    type: number
+  }
   measure: count_rows {
     type: count
   }
-  measure: inventory_current {
-    description: ""
+  measure: sum_inventory_current {
     type: sum
+    sql: ${TABLE}.inventory_current ;;
   }
 }
