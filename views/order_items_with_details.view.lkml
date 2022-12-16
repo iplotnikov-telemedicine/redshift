@@ -622,6 +622,11 @@ view: order_items_with_details {
     sql: ${profit} ;;
     value_format_name: usd
   }
+  measure: avg_ticket {
+    type: number
+    sql: ${sum_net_sales} / NULLIF(${orders_count}, 0) ;;
+    value_format_name: usd
+  }
   measure: avg_unit_price {
     type: number
     sql: ${sum_amount} / NULLIF(${sum_order_item_quantity}, 0) ;;

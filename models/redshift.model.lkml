@@ -141,6 +141,14 @@ explore: order_items_with_details {
 
 }
 
+explore: daily_sales {
+  join: customers {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${daily_sales.comp_id} = ${customers.comp_id} ;;
+  }
+}
+
 
 explore: inventory_daily {
   access_filter: {
@@ -150,3 +158,5 @@ explore: inventory_daily {
 }
 
 explore: patients  {}
+
+explore: cashier_details {}
