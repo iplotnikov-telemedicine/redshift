@@ -123,6 +123,7 @@ explore: orders_with_details {
   }
 }
 
+explore: cashier_details {}
 
 explore: order_items_with_details {
   access_filter: {
@@ -158,5 +159,3 @@ explore: inventory_daily {
 }
 
 explore: patients  {}
-
-explore: cashier_details {}
