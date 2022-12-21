@@ -27,11 +27,24 @@ view: order_items_with_details {
     allowed_value: { value: "Brand" }
     default_value: "Discount Bucket"
   }
+  parameter: dimension2_picker {
+    label: "Dimension Selector 2"
+    type: string
+    allowed_value: { value: "Vendor" }
+    allowed_value: { value: "Brand" }
+    allowed_value: { value: "Category" }
+    default_value: "Vendor"
+  }
   parameter: product_category_picker {
     label: "Selected Category"
+    type: string
     suggest_dimension: product_parent_category
   }
-
+  parameter: staff_picker {
+    label: "Selected Employee"
+    type: string
+    suggest_dimension: cashier_name
+  }
 
 #---------------------------------------------------------
 # ORIGINAL TABLE FEILDS AS DIMENSIONS
@@ -428,6 +441,20 @@ view: order_items_with_details {
   dimension: cashier_name {
     type: string
     sql: ${TABLE}.cashier_name ;;
+
+  }
+  dimension: cashier_or_others {
+    type: string
+    sql:
+      {% if staff_picker._in_query %}
+        CASE ${TABLE}.cashier_name
+          WHEN ${selected_staff}
+          THEN ${TABLE}.cashier_name
+          ELSE 'All Others'
+        END
+      {% else %}
+        'All'
+      {% endif %} ;;
   }
   dimension: patient_full_name {
     type: string
@@ -561,18 +588,47 @@ view: order_items_with_details {
       {% elsif dimension_picker._parameter_value == "'Brand'" %} ${brand_name}
       {% else %} NULL {% endif %} ;;
   }
+  dimension: dimension2_by_selector {
+    label_from_parameter: dimension2_picker
+    type: string
+    description: "Use with dimension picker to change dimension 2"
+    sql:
+      {% if dimension2_picker._parameter_value == "'Vendor'" %} ${vendor_name}
+      {% elsif dimension2_picker._parameter_value == "'Brand'" %} ${brand_name}
+      {% elsif dimension2_picker._parameter_value == "'Category'" %} ${product_parent_category}
+      {% else %} NULL {% endif %} ;;
+  }
   dimension: selected_category {
     label_from_parameter: product_category_picker
     type: string
     description: "Use with dimension picker to change product category"
     sql:
-      {% if product_category_picker._parameter_value != null and product_category_picker._parameter_value != '' %}
-      {{ product_category_picker._parameter_value }} {% else %} 'All' {% endif %} ;;
+      {% if product_category_picker._in_query %}
+       {{ product_category_picker._parameter_value }}
+      {% else %}
+        'All'
+      {% endif %} ;;
   }
   dimension: is_product_category_selected {
     type: yesno
     description: "Use with dimension picker to change dimension"
     sql: {{ product_category_picker._parameter_value }} = ${product_parent_category} ;;
+  }
+  dimension: selected_staff {
+    label_from_parameter: staff_picker
+    type: string
+    description: "Use with dimension picker to change staff"
+    sql:
+      {% if staff_picker._in_query %}
+       {{ staff_picker._parameter_value }}
+      {% else %}
+        'All'
+      {% endif %} ;;
+  }
+  dimension: is_staff_selected {
+    type: yesno
+    description: "Use with dimension picker to change dimension"
+    sql: {{ staff_picker._parameter_value }} = ${cashier_name} ;;
   }
 
 
