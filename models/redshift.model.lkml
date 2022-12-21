@@ -158,4 +158,9 @@ explore: inventory_daily {
   }
 }
 
-explore: patients  {}
+explore: patients  {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+}

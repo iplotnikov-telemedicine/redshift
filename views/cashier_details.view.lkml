@@ -18,6 +18,14 @@ view: cashier_details {
         to_field: order_items_with_details.confirmed_date
       }
       bind_filters: {
+        from_field: cashier_details.brand_name
+        to_field: order_items_with_details.brand_name
+      }
+      bind_filters: {
+        from_field: cashier_details.product_name
+        to_field: order_items_with_details.product_name
+      }
+      bind_filters: {
         from_field: cashier_details.account_name
         to_field: order_items_with_details.account_name
       }
@@ -29,6 +37,14 @@ view: cashier_details {
   }
   filter: confirmed_date {
     type: date
+    description: ""
+  }
+  filter: brand_name {
+    type: string
+    description: ""
+  }
+  filter: product_name {
+    type: string
     description: ""
   }
   dimension: account_name {

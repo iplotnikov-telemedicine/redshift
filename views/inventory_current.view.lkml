@@ -47,6 +47,7 @@ view: inventory_current {
   dimension: parent_category {
     description: ""
     type: string
+    sql: coalesce(parent_category, 'Unknown') ;;
   }
   dimension: sub_category_1 {
     description: ""
@@ -66,5 +67,6 @@ view: inventory_current {
   measure: sum_inventory_current {
     type: sum
     sql: ${TABLE}.inventory_current ;;
+    value_format_name: decimal_2
   }
 }
