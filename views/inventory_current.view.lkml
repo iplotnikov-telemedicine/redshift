@@ -40,6 +40,20 @@ view: inventory_current {
     description: ""
     type: string
   }
+  dimension: vendor_name {
+    description: ""
+    type: string
+  }
+  dimension: unit {
+    description: ""
+    type: string
+  }
+  dimension: prod_cost {
+    alias: [product_cost]
+    description: ""
+    type: number
+    value_format_name: usd
+  }
   dimension: direct_category {
     description: ""
     type: string

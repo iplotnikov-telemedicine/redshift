@@ -9,6 +9,9 @@ view: order_items_with_details {
     type: date_time
     datatype: datetime
   }
+  parameter: number_of_weeks {
+    type: number
+  }
   parameter: timeframe_picker {
     label: "Date Granularity"
     type: unquoted
@@ -629,6 +632,14 @@ view: order_items_with_details {
     type: yesno
     description: "Use with dimension picker to change dimension"
     sql: {{ staff_picker._parameter_value }} = ${cashier_name} ;;
+  }
+  dimension: num_days {
+    type: number
+    sql: CEILING(datediff(hours, {% date_start date_time_filter %},{% date_end date_time_filter %})/24)  ;;
+  }
+  dimension: inventory_should_cover {
+    type: number
+    sql: {{ number_of_weeks._parameter_value }} ;;
   }
 
 

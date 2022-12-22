@@ -68,4 +68,11 @@ explore: inventory_current {
     field: comp_id
     user_attribute: allowed_customers
   }
+  join: order_items_with_details {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${order_items_with_details.comp_id} = ${inventory_current.comp_id}
+      and ${order_items_with_details.office_id} = ${inventory_current.office_id}
+      and ${order_items_with_details.product_id} = ${inventory_current.product_id};;
+  }
 }
