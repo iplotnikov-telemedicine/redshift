@@ -35,11 +35,7 @@ explore: companies {
   }
 }
 
-
-
-# REPORTS:
-# - Brand Details (Top level statistics, Sales and Margin, Sales by Category);
-# - Discount Overview (General)
+# Dashboard source
 explore: sales_details {
   view_name: order_items_with_details
   access_filter: {
@@ -55,7 +51,7 @@ explore: sales_details {
   }
 }
 
-# REPORTS: Brand Details (Sales and Stock)
+# Dashboard source
 explore: inventory_daily  {
   access_filter: {
     field: comp_id
@@ -63,7 +59,7 @@ explore: inventory_daily  {
   }
 }
 
-# REPORTS: Brand Details (As Yesterday)
+# Dashboard source
 explore: inventory_current {
   access_filter: {
     field: comp_id

@@ -7,7 +7,7 @@
   elements:
   - title: "% of Total Net Sales / Units"
     name: "% of Total Net Sales / Units"
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: marketplace_viz_multiple_value::multiple_value-marketplace
     fields: [category_revenue, order_items_with_details.sum_net_sales, order_items_with_details.sum_order_item_quantity,
@@ -104,7 +104,7 @@
     height: 4
   - title: Percent of Net Sales
     name: Percent of Net Sales
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: looker_column
     fields: [order_items_with_details.dimension_by_selector, order_items_with_details.sum_net_sales]
@@ -200,7 +200,7 @@
     height: 9
   - title: Monthly Sales
     name: Monthly Sales
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: looker_column
     fields: [confirmed_month_number, order_items_with_details.sum_net_sales, order_items_with_details.confirmed_year]
@@ -282,7 +282,7 @@
     height: 9
   - title: Net Sales Ranking
     name: Net Sales Ranking
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: looker_grid
     fields: [order_items_with_details.sum_net_sales, order_items_with_details.brand_name,
@@ -406,7 +406,7 @@
     height: 18
   - title: Net Sales YTD
     name: Net Sales YTD
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: single_value
     fields: [order_items_with_details.sum_net_sales, order_items_with_details.confirmed_year]
@@ -504,7 +504,7 @@
     height: 5
   - title: Net Sales MTD
     name: Net Sales MTD
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: single_value
     fields: [order_items_with_details.sum_net_sales, order_items_with_details.confirmed_month]
@@ -598,7 +598,7 @@
     height: 5
   - title: Units YTD
     name: Units YTD
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: single_value
     fields: [order_items_with_details.confirmed_year, order_items_with_details.sum_order_item_quantity]
@@ -691,7 +691,7 @@
     height: 5
   - title: Units MTD
     name: Units MTD
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: single_value
     fields: [order_items_with_details.confirmed_month, order_items_with_details.sum_order_item_quantity]
@@ -784,7 +784,7 @@
     height: 5
   - title: Packages Sizes
     name: Packages Sizes
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: looker_column
     fields: [total_quantity_groups, order_items_with_details.sum_net_sales, order_items_with_details.sum_profit,
@@ -901,7 +901,7 @@
     height: 8
   - title: TOP Products
     name: TOP Products
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: looker_grid
     fields: [order_items_with_details.brand_name, order_items_with_details.product_name,
@@ -1028,7 +1028,7 @@
     height: 9
   - title: New Tile
     name: New Tile
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     type: single_value
     fields: [order_items_with_details.selected_category]
@@ -1126,7 +1126,7 @@
     ui_config:
       type: tag_list
       display: popover
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     listens_to_filters: []
     field: order_items_with_details.account_name
@@ -1140,7 +1140,7 @@
       type: relative_timeframes
       display: inline
       options: []
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     listens_to_filters: []
     field: order_items_with_details.confirmed_date
@@ -1153,7 +1153,7 @@
     ui_config:
       type: advanced
       display: popover
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     listens_to_filters: [Account Name]
     field: order_items_with_details.office_name
@@ -1166,7 +1166,7 @@
     ui_config:
       type: button_toggles
       display: popover
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     listens_to_filters: [Account Name]
     field: order_items_with_details.product_category_picker
@@ -1182,7 +1182,7 @@
       options:
       - Brand
       - Vendor
-    model: headset_reports
+    model: starter_pack
     explore: sales_details
     listens_to_filters: []
     field: order_items_with_details.dimension_picker
