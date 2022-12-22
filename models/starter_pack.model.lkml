@@ -1,7 +1,8 @@
 connection: "redshift"
 
-include: "/views/*.view.lkml"                # include all views in the views/ folder in this project
+include: "/views/*.view.lkml"
 include: "/data_tests.lkml"
+include: "/dashboards/categories_details.dashboard.lookml"   # include a LookML dashboard called my_dashboard
 
 
 # Dictionary for filters
@@ -34,11 +35,7 @@ explore: companies {
   }
 }
 
-
-
-# REPORTS:
-# - Brand Details (Top level statistics, Sales and Margin, Sales by Category);
-# - Discount Overview (General)
+# Dashboard source
 explore: sales_details {
   view_name: order_items_with_details
   access_filter: {
@@ -54,7 +51,7 @@ explore: sales_details {
   }
 }
 
-# REPORTS: Brand Details (Sales and Stock)
+# Dashboard source
 explore: inventory_daily  {
   access_filter: {
     field: comp_id
@@ -62,17 +59,10 @@ explore: inventory_daily  {
   }
 }
 
-# REPORTS: Brand Details (As Yesterday)
+# Dashboard source
 explore: inventory_current {
   access_filter: {
     field: comp_id
     user_attribute: allowed_customers
-  }
-  join: order_items_with_details {
-    type: left_outer
-    relationship: one_to_many
-    sql_on: ${order_items_with_details.comp_id} = ${inventory_current.comp_id}
-      and ${order_items_with_details.office_id} = ${inventory_current.office_id}
-      and ${order_items_with_details.product_id} = ${inventory_current.product_id};;
   }
 }

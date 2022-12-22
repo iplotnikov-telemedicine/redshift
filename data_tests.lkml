@@ -1,4 +1,4 @@
-include: "/models/headset_reports.model.lkml"
+include: "/models/starter_pack.model.lkml"
 
 test: sales_details_id_is_unique {
   explore_source: sales_details {
