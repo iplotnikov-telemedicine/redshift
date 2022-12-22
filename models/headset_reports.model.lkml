@@ -1,7 +1,8 @@
 connection: "redshift"
 
-include: "/views/*.view.lkml"                # include all views in the views/ folder in this project
+include: "/views/*.view.lkml"
 include: "/data_tests.lkml"
+include: "/dashboards/categories_details.dashboard.lookml"   # include a LookML dashboard called my_dashboard
 
 
 # Dictionary for filters
