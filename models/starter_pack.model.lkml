@@ -71,3 +71,23 @@ explore: inventory_current {
       and ${order_items_with_details.product_id} = ${inventory_current.product_id};;
   }
 }
+
+
+explore: cashier_details {}
+
+explore: order_items_with_details {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+
+  join: product_transactions {
+    sql_on: ${order_items_with_details.comp_id} = ${product_transactions.comp_id}
+      AND ${order_items_with_details.order_id} = ${product_transactions.order_id}
+      AND ${order_items_with_details.product_checkin_id} = ${product_transactions.product_checkin_id} ;;
+    type: inner
+    relationship: many_to_one
+    # fields: [comp_id, order_id, product_checkin_id, transaction_type_name, quantity_sold]
+  }
+
+}

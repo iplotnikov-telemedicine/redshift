@@ -846,5 +846,5 @@ view: order_items_with_details {
 #---------------------------------------------------------
 # FIELDS FOR DRILLING
 #---------------------------------------------------------
-  drill_fields: [discount_name_combined, order_id, order_number, id, product_name, office_name, amount, paid_amount, tax, gross_sale, order_item_quantity]
+  drill_fields: [discount_name_combined, order_id, order_number, id, product_name, office_name, amount, paid_amount, tax, gross_sale, order_item_quantity, confirmed_raw]
 }
