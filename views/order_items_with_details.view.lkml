@@ -96,6 +96,10 @@ view: order_items_with_details {
     type: string
     sql: ${TABLE}.prod_sku ;;
   }
+  dimension: net_weight {
+    type: string
+    sql: ${TABLE}.net_weight ;;
+  }
   dimension: descr {
     type: string
     sql: ${TABLE}.descr ;;
@@ -615,7 +619,12 @@ view: order_items_with_details {
   dimension: is_product_category_selected {
     type: yesno
     description: "Use with dimension picker to change dimension"
-    sql: {{ product_category_picker._parameter_value }} = ${product_parent_category} ;;
+    sql:
+      {% if product_category_picker._in_query %}
+       {{ product_category_picker._parameter_value }} = ${product_parent_category}
+      {% else %}
+        1 = 1
+      {% endif %} ;;
   }
   dimension: selected_staff {
     label_from_parameter: staff_picker
@@ -640,6 +649,15 @@ view: order_items_with_details {
   dimension: inventory_should_cover {
     type: number
     sql: {{ number_of_weeks._parameter_value }} ;;
+  }
+  dimension:  is_confirmed_in_range {
+    type: yesno
+    sql: ${confirmed_raw} between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;
+  }
+  dimension:  is_confirmed_in_range_year_ago {
+    type: yesno
+    sql: ${confirmed_raw} between ADD_MONTHS({% date_start date_time_filter %}, -12)
+        and ADD_MONTHS({% date_end date_time_filter %}, -12) ;;
   }
 
 
@@ -784,6 +802,14 @@ view: order_items_with_details {
   measure:  sum_net_sales_in_range {
     type: sum
     sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
+      THEN ${net_sale} END;;
+    value_format_name: usd
+  }
+  measure:  sum_net_sales_in_range_year_ago {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between
+        ADD_MONTHS({% date_start date_time_filter %}, -12)
+        and ADD_MONTHS({% date_end date_time_filter %}, -12)
       THEN ${net_sale} END;;
     value_format_name: usd
   }
