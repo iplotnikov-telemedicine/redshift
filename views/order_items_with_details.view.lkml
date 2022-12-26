@@ -97,8 +97,10 @@ view: order_items_with_details {
     sql: ${TABLE}.prod_sku ;;
   }
   dimension: net_weight {
-    type: string
+    type: number
     sql: ${TABLE}.net_weight ;;
+    value_format_name: decimal_1
+    html: {{value}}g ;;
   }
   dimension: descr {
     type: string
@@ -455,7 +457,7 @@ view: order_items_with_details {
     sql:
       {% if staff_picker._in_query %}
         CASE ${TABLE}.cashier_name
-          WHEN ${selected_staff}
+          WHEN ${selected_staff_dimension}
           THEN ${TABLE}.cashier_name
           ELSE 'All Others'
         END
@@ -605,10 +607,10 @@ view: order_items_with_details {
       {% elsif dimension2_picker._parameter_value == "'Category'" %} ${product_parent_category}
       {% else %} NULL {% endif %} ;;
   }
-  dimension: selected_category {
+  dimension: selected_category_dimension {
     label_from_parameter: product_category_picker
     type: string
-    description: "Use with dimension picker to change product category"
+    description: "Use with dimension picker to select product category"
     sql:
       {% if product_category_picker._in_query %}
        {{ product_category_picker._parameter_value }}
@@ -626,10 +628,10 @@ view: order_items_with_details {
         1 = 1
       {% endif %} ;;
   }
-  dimension: selected_staff {
+  dimension: selected_staff_dimension {
     label_from_parameter: staff_picker
     type: string
-    description: "Use with dimension picker to change staff"
+    description: "Use with dimension picker to select staff"
     sql:
       {% if staff_picker._in_query %}
        {{ staff_picker._parameter_value }}

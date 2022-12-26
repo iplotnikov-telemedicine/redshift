@@ -1031,9 +1031,9 @@
     model: starter_pack
     explore: sales_details
     type: single_value
-    fields: [order_items_with_details.selected_category]
+    fields: [order_items_with_details.selected_category_dimension]
     filters: {}
-    sorts: [order_items_with_details.selected_category]
+    sorts: [order_items_with_details.selected_category_dimension]
     limit: 500
     query_timezone: America/Los_Angeles
     custom_color_enabled: true
