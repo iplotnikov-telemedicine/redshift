@@ -2,8 +2,8 @@ connection: "redshift"
 
 include: "/views/*.view.lkml"
 include: "/data_tests.lkml"
-include: "/dashboards/categories_details.dashboard.lookml"   # include a LookML dashboard called my_dashboard
-
+include: "/dashboards/categories_details.dashboard.lookml"
+include: "/persistent/inventory_weekly_by_category.view.lkml"
 
 # Dictionary for filters
 explore: offices {
