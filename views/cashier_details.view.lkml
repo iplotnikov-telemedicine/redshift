@@ -1,8 +1,8 @@
 # # If necessary, uncomment the line below to include explore_source.
-# # include: "redshift.model.lkml"
+# include: "redshift.model.lkml"
 
 # If necessary, uncomment the line below to include explore_source.
-# include: "redshift.model.lkml"
+# include: "starter_pack.model.lkml"
 
 view: cashier_details {
   derived_table: {

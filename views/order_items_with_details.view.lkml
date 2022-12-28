@@ -96,6 +96,12 @@ view: order_items_with_details {
     type: string
     sql: ${TABLE}.prod_sku ;;
   }
+  dimension: net_weight {
+    type: number
+    sql: ${TABLE}.net_weight ;;
+    value_format_name: decimal_1
+    html: {{value}}g ;;
+  }
   dimension: descr {
     type: string
     sql: ${TABLE}.descr ;;
@@ -451,7 +457,7 @@ view: order_items_with_details {
     sql:
       {% if staff_picker._in_query %}
         CASE ${TABLE}.cashier_name
-          WHEN ${selected_staff}
+          WHEN ${selected_staff_dimension}
           THEN ${TABLE}.cashier_name
           ELSE 'All Others'
         END
@@ -601,10 +607,10 @@ view: order_items_with_details {
       {% elsif dimension2_picker._parameter_value == "'Category'" %} ${product_parent_category}
       {% else %} NULL {% endif %} ;;
   }
-  dimension: selected_category {
+  dimension: selected_category_dimension {
     label_from_parameter: product_category_picker
     type: string
-    description: "Use with dimension picker to change product category"
+    description: "Use with dimension picker to select product category"
     sql:
       {% if product_category_picker._in_query %}
        {{ product_category_picker._parameter_value }}
@@ -615,12 +621,17 @@ view: order_items_with_details {
   dimension: is_product_category_selected {
     type: yesno
     description: "Use with dimension picker to change dimension"
-    sql: {{ product_category_picker._parameter_value }} = ${product_parent_category} ;;
+    sql:
+      {% if product_category_picker._in_query %}
+       {{ product_category_picker._parameter_value }} = ${product_parent_category}
+      {% else %}
+        1 = 1
+      {% endif %} ;;
   }
-  dimension: selected_staff {
+  dimension: selected_staff_dimension {
     label_from_parameter: staff_picker
     type: string
-    description: "Use with dimension picker to change staff"
+    description: "Use with dimension picker to select staff"
     sql:
       {% if staff_picker._in_query %}
        {{ staff_picker._parameter_value }}
@@ -640,6 +651,15 @@ view: order_items_with_details {
   dimension: inventory_should_cover {
     type: number
     sql: {{ number_of_weeks._parameter_value }} ;;
+  }
+  dimension:  is_confirmed_in_range {
+    type: yesno
+    sql: ${confirmed_raw} between {% date_start date_time_filter %} and {% date_end date_time_filter %} ;;
+  }
+  dimension:  is_confirmed_in_range_year_ago {
+    type: yesno
+    sql: ${confirmed_raw} between ADD_MONTHS({% date_start date_time_filter %}, -12)
+        and ADD_MONTHS({% date_end date_time_filter %}, -12) ;;
   }
 
 
@@ -787,6 +807,14 @@ view: order_items_with_details {
       THEN ${net_sale} END;;
     value_format_name: usd
   }
+  measure:  sum_net_sales_in_range_year_ago {
+    type: sum
+    sql: CASE WHEN ${confirmed_time} between
+        ADD_MONTHS({% date_start date_time_filter %}, -12)
+        and ADD_MONTHS({% date_end date_time_filter %}, -12)
+      THEN ${net_sale} END;;
+    value_format_name: usd
+  }
   measure:  sum_gross_sales_in_range {
     type: sum
     sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
@@ -846,5 +874,5 @@ view: order_items_with_details {
 #---------------------------------------------------------
 # FIELDS FOR DRILLING
 #---------------------------------------------------------
-  drill_fields: [discount_name_combined, order_id, order_number, id, product_name, office_name, amount, paid_amount, tax, gross_sale, order_item_quantity]
+  drill_fields: [discount_name_combined, order_id, order_number, id, product_name, office_name, amount, paid_amount, tax, gross_sale, order_item_quantity, confirmed_raw]
 }
