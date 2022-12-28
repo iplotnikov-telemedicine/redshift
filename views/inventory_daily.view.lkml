@@ -25,7 +25,7 @@ view: inventory_daily {
 # ORIGINAL TABLE FEILDS AS DIMENSIONS
 #---------------------------------------------------------
 
-  dimension_group: report_date {
+  dimension_group: report_at {
     datatype: date
     timeframes: [date, week, month, year]
     description: ""
@@ -101,7 +101,7 @@ view: inventory_daily {
 
   dimension: number_of_days_filtered {
     type: number
-    sql: datediff(days, {% date_start report_date_date %},{% date_end report_date_date %}) ;;
+    sql: datediff(days, {% date_start report_at_date %},{% date_end report_at_date %}) ;;
   }
   dimension: is_filtered_range {
     type: yesno
@@ -116,10 +116,10 @@ view: inventory_daily {
     label_from_parameter: timeframe_picker
     description: "Use with timeframe picker to change date granularity"
     sql:
-      {% if timeframe_picker._parameter_value == 'Day' %} ${report_date_date}
-      {% elsif timeframe_picker._parameter_value == 'Week' %} ${report_date_week}
-      {% elsif timeframe_picker._parameter_value == 'Month' %} ${report_date_month}
-      {% elsif timeframe_picker._parameter_value == 'Year' %} ${report_date_year}
+      {% if timeframe_picker._parameter_value == 'Day' %} ${report_at_date}
+      {% elsif timeframe_picker._parameter_value == 'Week' %} ${report_at_week}
+      {% elsif timeframe_picker._parameter_value == 'Month' %} ${report_at_month}
+      {% elsif timeframe_picker._parameter_value == 'Year' %} ${report_at_year}
       {% else %} null {% endif %} ;;
   }
 

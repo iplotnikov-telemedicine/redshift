@@ -56,6 +56,34 @@ explore: inventory_daily  {
     field: comp_id
     user_attribute: allowed_customers
   }
+  join: order_items_with_details {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${order_items_with_details.office_id} = ${inventory_daily.office_id}
+      and ${order_items_with_details.product_id} = ${inventory_daily.product_id}
+      and ${order_items_with_details.confirmed_date} = ${inventory_daily.report_at_date};;
+  }
+}
+
+
+# Persistent native derived table source
+explore: inventory_daily_wo_access_filter  {
+  view_name: inventory_daily
+  join: order_items_with_details {
+    type: left_outer
+    relationship: one_to_many
+    sql_on: ${order_items_with_details.office_id} = ${inventory_daily.office_id}
+      and ${order_items_with_details.product_id} = ${inventory_daily.product_id}
+      and ${order_items_with_details.confirmed_date} = ${inventory_daily.report_at_date};;
+  }
+}
+
+# Dashboard source
+explore: inventory_weekly_by_category {
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
 }
 
 # Dashboard source
