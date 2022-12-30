@@ -47,7 +47,7 @@ view: inventory_weekly_by_category {
   }
   dimension: report_at_week {
     convert_tz: no
-    type: date
+    type: date_week
   }
   dimension: time_period {
     type: string

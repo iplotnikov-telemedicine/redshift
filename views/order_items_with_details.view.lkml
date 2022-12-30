@@ -419,6 +419,10 @@ view: order_items_with_details {
     ]
     sql: ${TABLE}.confirmed_at ;;
   }
+  dimension: confirmed_simple_date {
+    type: date
+    sql: CAST(${TABLE}.confirmed_at as date) ;;
+  }
   dimension: brand_name {
     type: string
     value_format: ""
