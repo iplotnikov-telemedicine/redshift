@@ -12,6 +12,17 @@ explore: customer_limits_history {
 
 }
 
+
+explore: register_shifts_stat {
+
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+
+}
+
+
 explore: orders_stat {
 
   join: patients_stat {

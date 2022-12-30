@@ -95,8 +95,8 @@ explore: inventory_current {
   join: order_items_with_details {
     type: left_outer
     relationship: one_to_many
-    sql_on: ${order_items_with_details.office_id} = ${inventory_current.office_id}
-      and ${order_items_with_details.product_id} = ${inventory_current.product_id};;
+    sql_on: ${inventory_current.office_id} = ${order_items_with_details.office_id}
+      and ${inventory_current.product_id} = ${order_items_with_details.product_id};;
   }
 }
 
