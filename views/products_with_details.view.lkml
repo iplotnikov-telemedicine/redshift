@@ -28,7 +28,7 @@ view: products_with_details {
 
   dimension: parent_category {
     type: string
-    sql: ${TABLE}.parent_category ;;
+    sql: coalesce(${TABLE}.parent_category, 'Unknown') ;;
   }
 
   dimension: prod_cost {
