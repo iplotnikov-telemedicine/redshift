@@ -454,20 +454,6 @@ view: order_items_with_details {
   dimension: cashier_name {
     type: string
     sql: ${TABLE}.cashier_name ;;
-
-  }
-  dimension: cashier_or_others {
-    type: string
-    sql:
-      {% if staff_picker._in_query %}
-        CASE ${TABLE}.cashier_name
-          WHEN ${selected_staff_dimension}
-          THEN ${TABLE}.cashier_name
-          ELSE 'All Others'
-        END
-      {% else %}
-        'All'
-      {% endif %} ;;
   }
   dimension: patient_full_name {
     type: string
@@ -555,9 +541,17 @@ view: order_items_with_details {
     type: yesno
     sql: ${cart_discount_amount}>0 OR ${item_discount_amount}>0;;
   }
-  dimension: discount_amount_calculated {
+  dimension: orders_item_amount_share {
     type: number
-    sql: ${amount} - ${gross_sale} ;;
+    sql:
+          CASE WHEN ${order_total_amount} IS NOT NULL AND ${order_total_amount} > 0
+          THEN ${paid_amount}/${order_total_amount}
+          ELSE Null END;;
+  }
+  dimension: discount_amount_calculated {
+    label: "Item and Cart Discount Amount Calc"
+    type: number
+    sql: ${item_discount_amount} + ${cart_discount_amount} * ${orders_item_amount_share} ;;
   }
   dimension: date_dynamic {
     type: string
@@ -665,7 +659,19 @@ view: order_items_with_details {
     sql: ${confirmed_raw} between ADD_MONTHS({% date_start date_time_filter %}, -12)
         and ADD_MONTHS({% date_end date_time_filter %}, -12) ;;
   }
-
+  dimension: cashier_or_others {
+    type: string
+    sql:
+      {% if staff_picker._in_query %}
+        CASE ${TABLE}.cashier_name
+          WHEN ${selected_staff_dimension}
+          THEN ${TABLE}.cashier_name
+          ELSE 'All Others'
+        END
+      {% else %}
+        'All'
+      {% endif %} ;;
+  }
 
 #---------------------------------------------------------
 # MEASURES BASIC
@@ -673,6 +679,10 @@ view: order_items_with_details {
   measure: count_rows {
     label: "Order Items Count"
     type: count
+  }
+  measure: sum_test_item_share {
+    type: sum
+    sql: ${orders_item_amount_share} ;;
   }
   measure: orders_count {
     type: count_distinct
@@ -798,6 +808,11 @@ view: order_items_with_details {
     type: number
     sql: ${sum_discount_amount_calculated} / NULLIF(${sum_amount}, 0) ;;
     value_format_name: percent_1
+  }
+  measure: sum_paid_amount {
+    type: sum
+    sql: ${paid_amount} ;;
+    value_format_name: usd
   }
 
 

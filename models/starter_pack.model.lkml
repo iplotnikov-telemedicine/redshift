@@ -48,6 +48,12 @@ explore: sales_details {
     sql_on: ${order_items_with_details.office_id} = ${inventory_current.office_id}
       and ${order_items_with_details.product_id} = ${inventory_current.product_id};;
   }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
+  }
 }
 
 # Dashboard source
@@ -62,6 +68,12 @@ explore: inventory_daily  {
     sql_on: ${order_items_with_details.office_id} = ${inventory_daily.office_id}
       and ${order_items_with_details.product_id} = ${inventory_daily.product_id}
       and ${order_items_with_details.confirmed_date} = ${inventory_daily.report_at_date};;
+  }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
   }
 }
 
@@ -97,6 +109,12 @@ explore: inventory_current {
     relationship: one_to_many
     sql_on: ${inventory_current.office_id} = ${order_items_with_details.office_id}
       and ${inventory_current.product_id} = ${order_items_with_details.product_id};;
+  }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
   }
 }
 
