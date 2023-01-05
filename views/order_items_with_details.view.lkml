@@ -90,15 +90,15 @@ view: order_items_with_details {
   }
   dimension: product_name {
     type: string
-    sql: ${TABLE}.name ;;
+    sql: ${products_with_details.prod_name} ;;
   }
   dimension: prod_sku {
     type: string
-    sql: ${TABLE}.prod_sku ;;
+    sql: ${products_with_details.prod_sku} ;;
   }
   dimension: net_weight {
     type: number
-    sql: ${TABLE}.net_weight ;;
+    sql: ${products_with_details.net_weight} ;;
     value_format_name: decimal_1
     html: {{value}}g ;;
   }
@@ -108,7 +108,7 @@ view: order_items_with_details {
   }
   dimension: vendor_name {
     type: string
-    sql: ${TABLE}.vendor_name ;;
+    sql: ${products_with_details.vendor_name} ;;
   }
   dimension: item_discount_name{
     type: string
@@ -135,7 +135,7 @@ view: order_items_with_details {
     type: number
     alias: [price]
     value_format_name: usd
-    sql: ${TABLE}.price ;;
+    sql: ${products_with_details.prod_cost} ;;
   }
   dimension: quantity {
     type: number
@@ -426,26 +426,26 @@ view: order_items_with_details {
   dimension: brand_name {
     type: string
     value_format: ""
-    sql: ${TABLE}.brand_name ;;
+    sql: ${products_with_details.brand_name} ;;
   }
   dimension: product_direct_category {
     type: string
     value_format: ""
-    sql: ${TABLE}.product_direct_category ;;
+    sql: ${products_with_details.direct_category} ;;
   }
   dimension: product_parent_category {
     type: string
     value_format: ""
-    sql: ${TABLE}.product_parent_category ;;
+    sql: ${products_with_details.parent_category} ;;
   }
   dimension: product_sub_category_1 {
     type: string
-    sql: ${TABLE}.product_sub_category_1 ;;
+    sql: ${products_with_details.sub_category_1} ;;
   }
   dimension: product_sub_category_2 {
     type: string
     value_format: ""
-    sql: ${TABLE}.product_sub_category_2 ;;
+    sql: ${products_with_details.sub_category_2} ;;
   }
   dimension: order_number {
     type: string

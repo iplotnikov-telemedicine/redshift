@@ -88,6 +88,12 @@ explore: inventory_daily_wo_access_filter  {
       and ${order_items_with_details.product_id} = ${inventory_daily.product_id}
       and ${order_items_with_details.confirmed_date} = ${inventory_daily.report_at_date};;
   }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
+  }
 }
 
 # Dashboard source
@@ -134,6 +140,13 @@ explore: order_items_with_details {
     type: inner
     relationship: many_to_one
     # fields: [comp_id, order_id, product_checkin_id, transaction_type_name, quantity_sold]
+  }
+
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
   }
 
 }

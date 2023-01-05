@@ -191,6 +191,12 @@ explore: order_items_with_details {
     # fields: [comp_id, order_id, product_checkin_id, transaction_type_name, quantity_sold]
   }
 
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
+  }
 }
 
 
