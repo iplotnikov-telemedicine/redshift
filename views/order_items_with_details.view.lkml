@@ -135,7 +135,7 @@ view: order_items_with_details {
     type: number
     alias: [price]
     value_format_name: usd
-    sql: ${products_with_details.prod_cost} ;;
+    sql: ${TABLE}.prod_cost ;;
   }
   dimension: quantity {
     type: number
