@@ -61,7 +61,7 @@ view: inventory_current {
   dimension: parent_category {
     description: ""
     type: string
-    sql: coalesce(parent_category, 'Unknown') ;;
+    sql: coalesce(${TABLE}.parent_category, 'Unknown') ;;
   }
   dimension: sub_category_1 {
     description: ""

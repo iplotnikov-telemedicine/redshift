@@ -48,6 +48,12 @@ explore: sales_details {
     sql_on: ${order_items_with_details.office_id} = ${inventory_current.office_id}
       and ${order_items_with_details.product_id} = ${inventory_current.product_id};;
   }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
+  }
 }
 
 # Dashboard source
@@ -63,6 +69,12 @@ explore: inventory_daily  {
       and ${order_items_with_details.product_id} = ${inventory_daily.product_id}
       and ${order_items_with_details.confirmed_date} = ${inventory_daily.report_at_date};;
   }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
+  }
 }
 
 
@@ -72,9 +84,15 @@ explore: inventory_daily_wo_access_filter  {
   join: order_items_with_details {
     type: left_outer
     relationship: one_to_many
-    sql_on: ${order_items_with_details.office_id} = ${inventory_daily.office_id}
-      and ${order_items_with_details.product_id} = ${inventory_daily.product_id}
-      and ${order_items_with_details.confirmed_date} = ${inventory_daily.report_at_date};;
+    sql_on: ${inventory_daily.office_id} = ${order_items_with_details.office_id}
+      and ${inventory_daily.product_id} = ${order_items_with_details.product_id}
+      and ${inventory_daily.report_at_date} = ${order_items_with_details.confirmed_date} ;;
+  }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${inventory_daily.product_id} = ${products_with_details.prod_id}
+      and ${inventory_daily.comp_id} = ${products_with_details.comp_id};;
   }
 }
 
@@ -98,6 +116,12 @@ explore: inventory_current {
     sql_on: ${inventory_current.office_id} = ${order_items_with_details.office_id}
       and ${inventory_current.product_id} = ${order_items_with_details.product_id};;
   }
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
+  }
 }
 
 
@@ -116,6 +140,13 @@ explore: order_items_with_details {
     type: inner
     relationship: many_to_one
     # fields: [comp_id, order_id, product_checkin_id, transaction_type_name, quantity_sold]
+  }
+
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id};;
   }
 
 }

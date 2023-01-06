@@ -90,15 +90,15 @@ view: order_items_with_details {
   }
   dimension: product_name {
     type: string
-    sql: ${TABLE}.name ;;
+    sql: ${products_with_details.prod_name} ;;
   }
   dimension: prod_sku {
     type: string
-    sql: ${TABLE}.prod_sku ;;
+    sql: ${products_with_details.prod_sku} ;;
   }
   dimension: net_weight {
     type: number
-    sql: ${TABLE}.net_weight ;;
+    sql: ${products_with_details.net_weight} ;;
     value_format_name: decimal_1
     html: {{value}}g ;;
   }
@@ -108,7 +108,7 @@ view: order_items_with_details {
   }
   dimension: vendor_name {
     type: string
-    sql: ${TABLE}.vendor_name ;;
+    sql: ${products_with_details.vendor_name} ;;
   }
   dimension: item_discount_name{
     type: string
@@ -135,7 +135,7 @@ view: order_items_with_details {
     type: number
     alias: [price]
     value_format_name: usd
-    sql: ${TABLE}.price ;;
+    sql: ${TABLE}.prod_cost ;;
   }
   dimension: quantity {
     type: number
@@ -420,37 +420,29 @@ view: order_items_with_details {
     ]
     sql: ${TABLE}.confirmed_at ;;
   }
-  measure: min_confirmed_date {
-    type: date
-    sql: MIN(${confirmed_date}) ;;
-  }
-  measure: max_confirmed_date {
-    type: date
-    sql: MAX(${confirmed_date}) ;;
-  }
   dimension: brand_name {
     type: string
     value_format: ""
-    sql: ${TABLE}.brand_name ;;
+    sql: ${products_with_details.brand_name} ;;
   }
   dimension: product_direct_category {
     type: string
     value_format: ""
-    sql: ${TABLE}.product_direct_category ;;
+    sql: ${products_with_details.direct_category} ;;
   }
   dimension: product_parent_category {
     type: string
     value_format: ""
-    sql: ${TABLE}.product_parent_category ;;
+    sql: ${products_with_details.parent_category} ;;
   }
   dimension: product_sub_category_1 {
     type: string
-    sql: ${TABLE}.product_sub_category_1 ;;
+    sql: ${products_with_details.sub_category_1} ;;
   }
   dimension: product_sub_category_2 {
     type: string
     value_format: ""
-    sql: ${TABLE}.product_sub_category_2 ;;
+    sql: ${products_with_details.sub_category_2} ;;
   }
   dimension: order_number {
     type: string
@@ -459,20 +451,6 @@ view: order_items_with_details {
   dimension: cashier_name {
     type: string
     sql: ${TABLE}.cashier_name ;;
-
-  }
-  dimension: cashier_or_others {
-    type: string
-    sql:
-      {% if staff_picker._in_query %}
-        CASE ${TABLE}.cashier_name
-          WHEN ${selected_staff_dimension}
-          THEN ${TABLE}.cashier_name
-          ELSE 'All Others'
-        END
-      {% else %}
-        'All'
-      {% endif %} ;;
   }
   dimension: patient_full_name {
     type: string
@@ -555,9 +533,17 @@ view: order_items_with_details {
     type: yesno
     sql: ${cart_discount_amount}>0 OR ${item_discount_amount}>0;;
   }
-  dimension: discount_amount_calculated {
+  dimension: orders_item_amount_share {
     type: number
-    sql: ${amount} - ${gross_sale} ;;
+    sql:
+          CASE WHEN ${order_total_amount} IS NOT NULL AND ${order_total_amount} > 0
+          THEN ${paid_amount}/${order_total_amount}
+          ELSE Null END;;
+  }
+  dimension: discount_amount_calculated {
+    label: "Item and Cart Discount Amount Calc"
+    type: number
+    sql: ${item_discount_amount} + ${cart_discount_amount} * ${orders_item_amount_share} ;;
   }
   dimension: date_dynamic {
     type: string
@@ -665,7 +651,19 @@ view: order_items_with_details {
     sql: ${confirmed_raw} between ADD_MONTHS({% date_start date_time_filter %}, -12)
         and ADD_MONTHS({% date_end date_time_filter %}, -12) ;;
   }
-
+  dimension: cashier_or_others {
+    type: string
+    sql:
+      {% if staff_picker._in_query %}
+        CASE ${TABLE}.cashier_name
+          WHEN ${selected_staff_dimension}
+          THEN ${TABLE}.cashier_name
+          ELSE 'All Others'
+        END
+      {% else %}
+        'All'
+      {% endif %} ;;
+  }
 
 #---------------------------------------------------------
 # MEASURES BASIC
@@ -673,6 +671,10 @@ view: order_items_with_details {
   measure: count_rows {
     label: "Order Items Count"
     type: count
+  }
+  measure: sum_test_item_share {
+    type: sum
+    sql: ${orders_item_amount_share} ;;
   }
   measure: orders_count {
     type: count_distinct
@@ -808,6 +810,11 @@ view: order_items_with_details {
     type: number
     sql: ${sum_discount_amount_calculated} / NULLIF(${sum_amount}, 0) ;;
     value_format_name: percent_1
+  }
+  measure: sum_paid_amount {
+    type: sum
+    sql: ${paid_amount} ;;
+    value_format_name: usd
   }
 
 
