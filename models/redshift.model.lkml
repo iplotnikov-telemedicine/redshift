@@ -208,3 +208,71 @@ explore: product_audit {
     sql_on: ${product_audit.id} = ${product_audit_item.audit_id} ;;
   }
 }
+
+
+# explore: order_items_with_discounts {
+#   from: order_items_with_details
+
+#   access_filter: {
+#     field: comp_id
+#     user_attribute: allowed_customers
+#   }
+
+#   join: discounts {
+#     type: inner
+#     relationship: many_to_one
+#     sql_on: ${order_items_with_discounts.discount_id} = ${discounts.id}
+#       and ${order_items_with_discounts.comp_id} = ${discounts.comp_id} ;;
+#   }
+
+#   join: product_filter_index {
+#     type: inner
+#     relationship: many_to_many
+#     sql_on: ${discounts.product_filter_id} = ${product_filter_index.product_filter_id}
+#       and ${discounts.comp_id} = ${product_filter_index.comp_id} ;;
+#   }
+# }
+
+
+explore: discounts {
+  sql_always_where: discounts.apply_type = 'item' and discounts.is_ongoing = 0 ;;
+
+  access_filter: {
+    field: comp_id
+    user_attribute: allowed_customers
+  }
+
+  join: companies {
+    relationship: many_to_one
+    type: inner
+    sql_on: ${discounts.comp_id} = ${companies.comp_id} ;;
+  }
+
+  join: product_filter_index {
+    type: inner
+    relationship: many_to_many
+    sql_on: ${discounts.product_filter_id} = ${product_filter_index.product_filter_id}
+      and ${discounts.comp_id} = ${product_filter_index.comp_id} ;;
+  }
+
+  join: int_products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${product_filter_index.product_id} = ${int_products_with_details.prod_id}
+      and ${product_filter_index.comp_id} = ${int_products_with_details.comp_id} ;;
+  }
+
+  join: order_items_with_details {
+    type: inner
+    relationship: many_to_many
+    sql_on: ${product_filter_index.product_id} = ${order_items_with_details.product_id}
+    and ${product_filter_index.comp_id} = ${order_items_with_details.comp_id} ;;
+  }
+
+  join: orders_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.order_id} = ${orders_with_details.id}
+      and ${order_items_with_details.comp_id} = ${orders_with_details.comp_id} ;;
+  }
+}

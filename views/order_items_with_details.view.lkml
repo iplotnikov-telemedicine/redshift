@@ -220,6 +220,7 @@ view: order_items_with_details {
     sql: ${TABLE}.free_discount ;;
   }
   dimension: income {
+    alias: [gross_margin, profit]
     type: number
     value_format_name: usd
     sql: ${TABLE}.income ;;
@@ -419,6 +420,14 @@ view: order_items_with_details {
     ]
     sql: ${TABLE}.confirmed_at ;;
   }
+  measure: min_confirmed_date {
+    type: date
+    sql: MIN(${confirmed_date}) ;;
+  }
+  measure: max_confirmed_date {
+    type: date
+    sql: MAX(${confirmed_date}) ;;
+  }
   dimension: brand_name {
     type: string
     value_format: ""
@@ -540,11 +549,6 @@ view: order_items_with_details {
   dimension: cogs {
     type: number
     sql: ${product_cost} * ${order_item_quantity} ;;
-    value_format_name: usd
-  }
-  dimension: profit {
-    type: number
-    sql: ${net_sale} - ${cogs};;
     value_format_name: usd
   }
   dimension: is_discounted {
@@ -706,7 +710,7 @@ view: order_items_with_details {
   }
   measure: sum_profit {
     type: sum
-    sql: ${profit} ;;
+    sql: ${income} ;;
     value_format_name: usd
   }
   measure: avg_ticket {
@@ -763,6 +767,16 @@ view: order_items_with_details {
   measure: sum_discount_amount {
     type: sum
     sql: ${discount_amount} ;;
+    value_format_name: usd
+  }
+  measure: sum_item_discount_amount {
+    type: sum
+    sql: ${item_discount_amount} ;;
+    value_format_name: usd
+  }
+  measure: sum_cart_discount_amount {
+    type: sum
+    sql: ${cart_discount_amount} ;;
     value_format_name: usd
   }
   measure: sum_refund_wo_tax {
@@ -830,7 +844,7 @@ view: order_items_with_details {
   measure:  sum_profit_in_range {
     type: sum
     sql: CASE WHEN ${confirmed_time} between {% date_start date_time_filter %} and {% date_end date_time_filter %}
-      THEN ${profit} END;;
+      THEN ${income} END;;
     value_format_name: usd
   }
   measure:  sum_cogs_in_range {
