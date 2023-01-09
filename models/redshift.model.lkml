@@ -241,7 +241,9 @@ explore: product_audit {
 
 
 explore: discounts {
-  sql_always_where: discounts.apply_type = 'item' and discounts.is_ongoing = 0 ;;
+  sql_always_where: discounts.apply_type = 'item'
+    and discounts.is_ongoing = 0
+    and discounts.use_type <> 'auto_apply';;
 
   access_filter: {
     field: comp_id
