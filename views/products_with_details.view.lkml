@@ -34,16 +34,19 @@ view: products_with_details {
   dimension: prod_cost {
     type: number
     sql: ${TABLE}.prod_cost ;;
+    value_format_name: usd
   }
 
   measure: total_prod_cost {
     type: sum
     sql: ${prod_cost} ;;
+    value_format_name: usd
   }
 
   measure: average_prod_cost {
     type: average
     sql: ${prod_cost} ;;
+    value_format_name: usd
   }
 
   dimension: prod_id {
@@ -59,6 +62,16 @@ view: products_with_details {
   dimension: prod_sku {
     type: string
     sql: ${TABLE}.prod_sku ;;
+  }
+
+  dimension: strain_type {
+    type: string
+    sql: ${TABLE}.strain_type ;;
+  }
+
+  dimension: strain_name {
+    type: string
+    sql: ${TABLE}.strain_name ;;
   }
 
   dimension: sub_category_1 {

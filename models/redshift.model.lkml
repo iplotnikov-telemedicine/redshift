@@ -182,6 +182,12 @@ explore: order_items_with_details {
     user_attribute: allowed_customers
   }
 
+  join: offices {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.office_id} = ${offices.office_id} ;;
+  }
+
   join: product_transactions {
     sql_on: ${order_items_with_details.comp_id} = ${product_transactions.comp_id}
       AND ${order_items_with_details.order_id} = ${product_transactions.order_id}
