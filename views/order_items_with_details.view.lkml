@@ -68,7 +68,6 @@ view: order_items_with_details {
     sql: ${TABLE}.office_id ;;
   }
   dimension: comp_id {
-    hidden: yes
     type: number
     value_format_name: id
     sql: ${TABLE}.comp_id ;;
@@ -452,6 +451,10 @@ view: order_items_with_details {
     type: string
     sql: ${TABLE}.cashier_name ;;
   }
+  dimension: patient_id {
+    type: number
+    sql: ${TABLE}.patient_id ;;
+  }
   dimension: patient_full_name {
     type: string
     value_format: ""
@@ -672,13 +675,17 @@ view: order_items_with_details {
     label: "Order Items Count"
     type: count
   }
+  measure: avg_items_per_order {
+    type: number
+    sql: round(1.0 * ${count_rows} / ${orders_count}, 1) ;;
+  }
   measure: sum_test_item_share {
     type: sum
     sql: ${orders_item_amount_share} ;;
   }
   measure: orders_count {
     type: count_distinct
-    sql: ${order_id} ;;
+    sql: CONCAT(${comp_id}, CONCAT(000, ${order_id})) ;;
   }
   measure: list_price {
     type: list

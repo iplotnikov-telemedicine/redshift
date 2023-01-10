@@ -67,9 +67,29 @@ view: orders_with_details {
 
   dimension: order_type {
     type: string
-    sql: ${TABLE}.type ;;
-    suggestions: ["pickup", "delivery"]
-    suggest_persist_for: "24 hours"
+    case: {
+      when: {
+        sql: ${TABLE}.type = 'pickup' ;;
+        label: "pickup"
+      }
+      when: {
+        sql: ${TABLE}.type = 'delivery' ;;
+        label: "delivery"
+      }
+      when: {
+        sql: ${TABLE}.type = 'walkin' ;;
+        label: "walkin"
+      }
+      when: {
+        sql: ${TABLE}.type = 'on_demand' ;;
+        label: "on_demand"
+      }
+      when: {
+        sql: ${TABLE}.type = 'mail_delivery' ;;
+        label: "mail_delivery"
+      }
+      else: "unknown"
+    }
   }
 
   dimension: confirmed_at {
@@ -211,12 +231,8 @@ view: orders_with_details {
         sql: ${TABLE}.marketplace = 6 ;;
         label: "openAPI"
       }
+      else: "unknown"
     }
-  }
-
-  dimension: type {
-    type: string
-    sql: ${TABLE}.type ;;
   }
 
   dimension: patient_first_name {

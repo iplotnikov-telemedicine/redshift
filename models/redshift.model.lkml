@@ -174,6 +174,34 @@ explore: patients  {
     field: comp_id
     user_attribute: allowed_customers
   }
+
+  join: patient_metrics {
+    relationship: one_to_one
+    type: inner
+    sql_on: ${patients.comp_id} = ${patient_metrics.comp_id}
+      and ${patients.patient_id} = ${patient_metrics.patient_id};;
+  }
+
+  join: orders_with_details {
+    relationship: one_to_many
+    type: inner
+    sql_on: ${patients.comp_id} = ${orders_with_details.comp_id}
+      and ${patients.patient_id} = ${orders_with_details.patient_id};;
+  }
+
+  join: order_items_with_details {
+    relationship: one_to_many
+    type: inner
+    sql_on: ${patients.comp_id} = ${order_items_with_details.comp_id}
+      and ${patients.patient_id} = ${order_items_with_details.patient_id};;
+  }
+
+  join: products_with_details {
+    type: inner
+    relationship: many_to_one
+    sql_on: ${order_items_with_details.product_id} = ${products_with_details.prod_id}
+      and ${order_items_with_details.comp_id} = ${products_with_details.comp_id} ;;
+  }
 }
 
 explore: order_items_with_details {

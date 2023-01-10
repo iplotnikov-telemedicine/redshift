@@ -131,21 +131,37 @@ view: patients {
   dimension: top_purchased_brands {
     type: string
     sql: ${TABLE}.top_purchased_brands ;;
+    value_format_name: usd
   }
 
   dimension: total_purchase_amount {
     type: number
     sql: ${TABLE}.total_purchase_amount ;;
+    value_format_name: usd
   }
 
   dimension: offline_purchase_amount {
     type: number
     sql: ${TABLE}.offline_purchase_amount ;;
+    value_format_name: usd
   }
 
   dimension: online_purchase_amount {
     type: number
     sql: ${TABLE}.online_purchase_amount ;;
+    value_format_name: usd
+  }
+
+  measure: total_offline_purchase_amount {
+    type: sum
+    sql: ${offline_purchase_amount} ;;
+    value_format_name: usd
+  }
+
+  measure: total_online_purchase_amount {
+    type: sum
+    sql: ${online_purchase_amount} ;;
+    value_format_name: usd
   }
 
   dimension_group: min_order {
@@ -235,11 +251,6 @@ view: patients {
     sql: ${TABLE}.visited_offices_count ;;
   }
 
-  dimension: sunday_order_count {
-    type: number
-    sql: ${TABLE}.sunday_order_count ;;
-  }
-
   dimension: monday_order_count {
     type: number
     sql: ${TABLE}.monday_order_count ;;
@@ -268,6 +279,46 @@ view: patients {
   dimension: saturday_order_count {
     type: number
     sql: ${TABLE}.saturday_order_count ;;
+  }
+
+  dimension: sunday_order_count {
+    type: number
+    sql: ${TABLE}.sunday_order_count ;;
+  }
+
+  measure: total_monday_order_count {
+    type: sum
+    sql: ${monday_order_count} ;;
+  }
+
+  measure: total_tuesday_order_count {
+    type: sum
+    sql: ${tuesday_order_count} ;;
+  }
+
+  measure: total_wednesday_order_count {
+    type: sum
+    sql: ${wednesday_order_count} ;;
+  }
+
+  measure: total_thursday_order_count {
+    type: sum
+    sql: ${thursday_order_count} ;;
+  }
+
+  measure: total_friday_order_count {
+    type: sum
+    sql: ${friday_order_count} ;;
+  }
+
+  measure: total_saturday_order_count {
+    type: sum
+    sql: ${saturday_order_count} ;;
+  }
+
+  measure: total_sunday_order_count {
+    type: sum
+    sql: ${sunday_order_count} ;;
   }
 
   dimension: month_orders {
